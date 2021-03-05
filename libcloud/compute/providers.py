@@ -174,7 +174,9 @@ DRIVERS = {
     Provider.KUBEVIRT:
     ('libcloud.compute.drivers.kubevirt', 'KubeVirtNodeDriver'),
     Provider.GIG_G8:
-    ('libcloud.compute.drivers.gig_g8', 'G8NodeDriver')
+    ('libcloud.compute.drivers.gig_g8', 'G8NodeDriver'),
+    Provider.PNAP_BMC:
+    ('libcloud.compute.drivers.pnap_bmc', 'PnapBmcNodeDriver'),
 }
 
 

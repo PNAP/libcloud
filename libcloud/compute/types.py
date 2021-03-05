@@ -79,6 +79,7 @@ class Provider(Type):
     :cvar OUTSCALE_INC: Outscale INC driver.
     :cvar OUTSCALE_SAS: Outscale SAS driver.
     :cvar OUTSCALE_SDK: Outscale SDK driver.
+    :cvar PNAP_BMC: PhoenixNAP BMC driver.
     :cvar PROFIT_BRICKS: ProfitBricks driver.
     :cvar RACKSPACE: Rackspace next-gen OpenStack based Cloud Servers
     :cvar RACKSPACE_FIRST_GEN: Rackspace First Gen Cloud Servers
@@ -145,6 +146,7 @@ class Provider(Type):
     OUTSCALE_SAS = 'outscale_sas'
     OUTSCALE = 'outscale'
     OVH = 'ovh'
+    PNAP_BMC = 'pnap_bmc'
     PROFIT_BRICKS = 'profitbricks'
     RACKSPACE = 'rackspace'
     RACKSPACE_FIRST_GEN = 'rackspace_first_gen'
