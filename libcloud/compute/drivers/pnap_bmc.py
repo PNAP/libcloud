@@ -17,6 +17,7 @@
 PNAP_BMC Cloud driver (https://phoenixnap.com/)
 """
 import json
+import os
 from base64 import standard_b64encode
 
 from libcloud.utils.py3 import httplib
@@ -26,168 +27,6 @@ from libcloud.compute.types import (NodeState, InvalidCredsError)
 from libcloud.compute.base import (Node, NodeDriver, NodeImage, NodeSize,
                                    NodeLocation, KeyPair)
 
-PNAP_BMC_SERVER_TYPES = [
-    {
-        'id': 's1.c1.small',
-        'name': 's1.c1.small',
-        'ram': 'N/A',
-        'disk': 'N/A',
-        'cpu': 'N/A',
-        'price': 'N/A',
-    },
-    {
-        'id': 's1.c1.medium',
-        'name': 's1.c1.medium',
-        'ram': 'N/A',
-        'disk': 'N/A',
-        'cpu': 'N/A',
-        'price': 'N/A',
-    },
-    {
-        'id': 's1.c2.medium',
-        'name': 's1.c2.medium',
-        'ram': 'N/A',
-        'disk': 'N/A',
-        'cpu': 'N/A',
-        'price': 'N/A',
-    },
-    {
-        'id': 's1.c2.large',
-        'name': 's1.c2.large',
-        'ram': 'N/A',
-        'disk': 'N/A',
-        'cpu': 'N/A',
-        'price': 'N/A',
-    },
-    {
-        'id': 'd1.c1.small',
-        'name': 'd1.c1.small',
-        'ram': 'N/A',
-        'disk': 'N/A',
-        'cpu': 'N/A',
-        'price': 'N/A',
-    },
-    {
-        'id': 'd1.c2.small',
-        'name': 'd1.c2.small',
-        'ram': 'N/A',
-        'disk': 'N/A',
-        'cpu': 'N/A',
-        'price': 'N/A',
-    },
-    {
-        'id': 'd1.c3.small',
-        'name': 'd1.c3.small',
-        'ram': 'N/A',
-        'disk': 'N/A',
-        'cpu': 'N/A',
-        'price': 'N/A',
-    },
-    {
-        'id': 'd1.c4.small',
-        'name': 'd1.c4.small',
-        'ram': 'N/A',
-        'disk': 'N/A',
-        'cpu': 'N/A',
-        'price': 'N/A',
-    },
-    {
-        'id': 'd1.c1.medium',
-        'name': 'd1.c1.medium',
-        'ram': 'N/A',
-        'disk': 'N/A',
-        'cpu': 'N/A',
-        'price': 'N/A',
-    },
-    {
-        'id': 'd1.c2.medium',
-        'name': 'd1.c2.medium',
-        'ram': 'N/A',
-        'disk': 'N/A',
-        'cpu': 'N/A',
-        'price': 'N/A',
-    },
-    {
-        'id': 'd1.c3.medium',
-        'name': 'd1.c3.medium',
-        'ram': 'N/A',
-        'disk': 'N/A',
-        'cpu': 'N/A',
-        'price': 'N/A',
-    },
-    {
-        'id': 'd1.c4.medium',
-        'name': 'd1.c4.medium',
-        'ram': 'N/A',
-        'disk': 'N/A',
-        'cpu': 'N/A',
-        'price': 'N/A',
-    },
-    {
-        'id': 'd1.c1.large',
-        'name': 'd1.c1.large',
-        'ram': 'N/A',
-        'disk': 'N/A',
-        'cpu': 'N/A',
-        'price': 'N/A',
-    },
-    {
-        'id': 'd1.c2.large',
-        'name': 'd1.c2.large',
-        'ram': 'N/A',
-        'disk': 'N/A',
-        'cpu': 'N/A',
-        'price': 'N/A',
-    },
-    {
-        'id': 'd1.c3.large',
-        'name': 'd1.c3.large',
-        'ram': 'N/A',
-        'disk': 'N/A',
-        'cpu': 'N/A',
-        'price': 'N/A',
-    },
-    {
-        'id': 'd1.c4.large',
-        'name': 'd1.c4.large',
-        'ram': 'N/A',
-        'disk': 'N/A',
-        'cpu': 'N/A',
-        'price': 'N/A',
-    },
-    {
-        'id': 'd1.m1.medium',
-        'name': 'd1.m1.medium',
-        'ram': 'N/A',
-        'disk': 'N/A',
-        'cpu': 'N/A',
-        'price': 'N/A',
-    },
-    {
-        'id': 'd1.m2.medium',
-        'name': 'd1.m2.medium',
-        'ram': 'N/A',
-        'disk': 'N/A',
-        'cpu': 'N/A',
-        'price': 'N/A',
-    },
-    {
-        'id': 'd1.m3.medium',
-        'name': 'd1.m3.medium',
-        'ram': 'N/A',
-        'disk': 'N/A',
-        'cpu': 'N/A',
-        'price': 'N/A',
-    },
-    {
-        'id': 'd1.m4.medium',
-        'name': 'd1.m4.medium',
-        'ram': 'N/A',
-        'disk': 'N/A',
-        'cpu': 'N/A',
-        'price': 'N/A',
-    },
-]
 
 AUTH_API = 'https://auth.phoenixnap.com/auth/realms/BMC/protocol/openid-connect/token' # noqa
 PATH = '/bmc/v1/servers/'
@@ -307,10 +146,12 @@ class PnapBmcNodeDriver(NodeDriver):
         :rtype: ``list`` of :class:`NodeImage`
         """
         sizes = []
-        for server in PNAP_BMC_SERVER_TYPES:
-            sizes.append(NodeSize(server['id'], server['name'],
-                                  server['ram'], server['disk'],
-                                  server['cpu'], server['price'], self
+        url = 'billing/v1/products?productCategory=SERVER'
+        servers = self.connection.request(url).object
+        for ser in servers:
+            sizes.append(NodeSize(ser['productCode'], ser['productCode'],
+                                  ser["metadata"]["ramInGb"] * 1000,
+                                  None, None, None, self
                                   )
                          )
         return sizes
@@ -497,7 +338,7 @@ class PnapBmcNodeDriver(NodeDriver):
         """
         return self._get_ssh_key_from_name(name)
 
-    def import_key_pair_from_string(self, name, key_material):
+    def import_key_pair_from_string(self, name, key_material, default=False):
         """
         Import a new public key from string.
 
@@ -507,19 +348,51 @@ class PnapBmcNodeDriver(NodeDriver):
         :param key_material: Public key material.
         :type key_material: ``str``
 
+        :param default: Keys marked as default are always included
+                        on server creation and reset unless
+                        toggled off in creation/reset request.
+        :type default: ``bool``
+
         :return: Imported key pair object.
         :rtype: :class:`.KeyPair`
         """
         data = {
             "name": name,
             "key": key_material,
-            "default": False
+            "default": default
         }
         data = json.dumps(data)
         res = self.connection.request(SSH_PATH,
                                       data=data,
                                       method='POST').object
         return self._to_key_pair(res)
+
+    def import_key_pair_from_file(self, name, key_file_path, default=False):
+        """
+        Import a new public key from file.
+
+        :param name: Key pair name.
+        :type name: ``str``
+
+        :param key_file_path: Path to the public key file.
+        :type key_file_path: ``str``
+
+        :param default: Keys marked as default are always included
+                        on server creation and reset unless
+                        toggled off in creation/reset request.
+        :type default: ``bool``
+
+        :return: Imported key pair object.
+        :rtype: :class:`.KeyPair`
+        """
+        key_file_path = os.path.expanduser(key_file_path)
+
+        with open(key_file_path, 'r') as fp:
+            key_material = fp.read().strip()
+
+        return self.import_key_pair_from_string(name=name,
+                                                key_material=key_material,
+                                                default=default)
 
     def delete_key_pair(self, key_pair):
         """
@@ -534,14 +407,14 @@ class PnapBmcNodeDriver(NodeDriver):
                                       method='DELETE')
         return res.status in VALID_RESPONSE_CODES
 
-    def ex_edit_key_pair(self, key_pair, name=None, default=False):
+    def ex_edit_key_pair(self, key_pair, name=None, default=None):
         """
         Edit an existing SSH key.
         :param: key_pair: SSH key (required)
         :type:  key_pair: :class:`KeyPair`
 
-        :param: name: SSH Key name that can represent the key
-                      as an alternative to it's ID.
+        :param: name: New SSH Key name that can represent
+                      the key as an alternative to it's ID.
         :type: ``str``
 
         :param: default: Keys marked as default are always included
@@ -551,6 +424,8 @@ class PnapBmcNodeDriver(NodeDriver):
         """
         if name is None:
             name = key_pair.name
+        if default is None:
+            default = key_pair.extra['default']
         data = {
             "name": name,
             "default": default

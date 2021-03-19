@@ -44,7 +44,11 @@ class PnapBmcTest(unittest.TestCase, TestCaseMixin):
 
     def test_list_sizes_response(self):
         sizes = self.driver.list_sizes()
-        self.assertEqual(len(sizes), 20)
+        server = sizes[0]
+        self.assertEqual(len(sizes), 2)
+        self.assertTrue(isinstance(sizes, list))
+        self.assertEqual(server.id, 'd1.c1.large')
+        self.assertEqual(server.ram, 256 * 1000)
 
     def test_http_status_ok_in_valid_responses(self):
         self.assertTrue(httplib.OK in VALID_RESPONSE_CODES)
@@ -143,6 +147,11 @@ class PnapBmcMockHttp(MockHttp):
             body = self.fixtures.load('create_node.json')
             return (httplib.ACCEPTED, body, {},
                     httplib.responses[httplib.ACCEPTED])
+
+    def _billing_v1_products(self, method, url, body, headers):
+        body = self.fixtures.load('list_sizes.json')
+        return (httplib.ACCEPTED, body, {},
+                httplib.responses[httplib.ACCEPTED])
 
     def _bmc_v1_servers_5f739c1xxx0f4e59dxxx52dc_actions_shutdown(
                                      self, method, url, body, headers):
