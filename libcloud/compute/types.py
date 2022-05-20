@@ -144,6 +144,7 @@ class Provider(Type):
     OUTSCALE_SAS = "outscale_sas"
     OUTSCALE = "outscale"
     OVH = "ovh"
+    PNAP_BMC = 'pnap_bmc'
     PROFIT_BRICKS = "profitbricks"
     RACKSPACE = "rackspace"
     RACKSPACE_FIRST_GEN = "rackspace_first_gen"

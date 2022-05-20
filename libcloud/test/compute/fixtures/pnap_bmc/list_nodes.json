@@ -1,0 +1,28 @@
+[
+    {
+      "id": "5f739c1xxx0f4e59dxxx52dc",
+      "status": "powered-on",
+      "hostname": "server-red",
+      "description": null,
+      "os": "ubuntu/bionic",
+      "type": "s1.c1.small",
+      "location": "PHX",
+      "cpu": "E-2276G",
+      "cpuCount": 1,
+      "coresPerCpu": 6,
+      "cpuFrequency": 3.8,
+      "ram": "64GB RAM",
+      "storage": "1x 1TB NVMe",
+      "privateIpAddresses": [
+        "10.0.0.11"
+      ],
+      "publicIpAddresses": [
+        "10.111.14.2",
+        "10.111.14.3"
+      ],
+      "reservationId": null,
+      "pricingModel": "HOURLY",
+      "password": "strongOne",
+      "networkType": "PUBLIC_AND_PRIVATE"
+    }
+]

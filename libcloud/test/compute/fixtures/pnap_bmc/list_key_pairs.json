@@ -1,0 +1,20 @@
+[
+  {
+    "default": false,
+    "id": "123",
+    "name": "testkey1",
+    "key": "ssh-rsa ABAADAQABAAABAQCeFQa32lIyVOyjph6e3e8...",
+    "fingerprint": "RRfGJ32A2EKUHxf6fEgnr4Rcp4rkNO8Gn5rtqu4E",
+    "createdOn": "2021-02-23T13:41:25.912Z",
+    "lastUpdatedOn": "2021-02-23T13:41:25.912Z"
+  },
+  {
+    "default": true,
+    "id": "456",
+    "name": "testkey2",
+    "key": "ssh-rsa AAAADAQABAAABAQCeFQa32lIyVOyjph6e3e8...",
+    "fingerprint": "j6or1TMmFKhGK6Z5dFoj9leNqbDEqsfUjmbJ8hwv",
+    "createdOn": "2021-02-23T13:42:45.293Z",
+    "lastUpdatedOn": "2021-02-23T13:42:45.293Z"
+  }
+]

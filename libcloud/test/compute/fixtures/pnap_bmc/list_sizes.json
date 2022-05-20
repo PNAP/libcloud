@@ -1,0 +1,28 @@
+[
+    {
+       "metadata":{
+          "ramInGb":256,
+          "cpu":"Dual Silver 4210R",
+          "cpuCount":2,
+          "coresPerCpu":10,
+          "cpuFrequency":2.4,
+          "network":"2x 25Gbps",
+          "storage":"2x 2TB NVMe"
+       },
+       "productCode":"d1.c1.large",
+       "productCategory":"SERVER"
+    },
+    {
+       "metadata":{
+          "ramInGb":256,
+          "cpu":"Dual Silver 4210R",
+          "cpuCount":2,
+          "coresPerCpu":10,
+          "cpuFrequency":2.4,
+          "network":"2x 25Gbps",
+          "storage":"2x 1TB NVMe"
+       },
+       "productCode":"d1.c1.medium",
+       "productCategory":"SERVER"
+    }
+ ]
