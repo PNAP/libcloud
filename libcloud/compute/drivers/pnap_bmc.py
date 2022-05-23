@@ -176,18 +176,33 @@ class PnapBmcNodeDriver(NodeDriver):
     def reboot_node(self, node):
         """
         Reboot a node.
+
+        :keyword node: The node to reboot
+        :type    node: :class:`Node`
+
+        :rtype: ``bool``
         """
         return self._action(node, 'reboot')
 
     def start_node(self, node):
         """
         Start a node.
+
+        :keyword node: Node which should be used
+        :type    node: :class:`Node`
+
+        :rtype: ``bool``
         """
         return self._action(node, 'power-on')
 
     def stop_node(self, node):
         """
         Stop a specific node.
+
+        :param node: Node which should be used
+        :type  node: :class:`Node`
+
+        :rtype: ``bool``
         """
         return self._action(node, 'shutdown')
 
@@ -201,6 +216,10 @@ class PnapBmcNodeDriver(NodeDriver):
                                       assigned to the server should be
                                       deleted or not.
         :type    ex_delete_ip_blocks: ``bool``
+
+        :keyword node: The node to delete
+        :type    node: :class:`Node`
+        :rtype: ``bool``
         """
         data = {
             "deleteIpBlocks": ex_delete_ip_blocks
@@ -213,6 +232,10 @@ class PnapBmcNodeDriver(NodeDriver):
         (which is equivalent to cutting off electricity from the server).
         We strongly advise you to use the stop_node in order to minimize
         any possible data loss or corruption.
+
+        :keyword node: Node which should be used
+        :type    node: :class:`Node`
+        :rtype: ``bool``
         """
         return self._action(node, 'power-off')
 
