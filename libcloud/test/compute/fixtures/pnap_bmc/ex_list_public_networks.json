@@ -1,0 +1,15 @@
+[
+    {
+        "id": "60472f76bbadb4f36541d2fd",
+        "name": "test",
+        "location": "PHX",
+        "ipBlocks": [
+            {
+                "id": "60473a6115e34466c9f8f083"
+            }
+        ],
+        "vlanId": 10,
+        "createdOn": "2022-04-05T13:50:30.491Z",
+        "memberships": []
+    }
+]

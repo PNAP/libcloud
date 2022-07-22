@@ -1,0 +1,17 @@
+{
+    "id":"123",
+    "productCode":"bandwidth",
+    "productCategory":"bandwidth",
+    "location":"PHX",
+    "reservationModel":"TWENTY_FOUR_MONTHS_RESERVATION",
+    "initialInvoiceModel":"CALENDAR_MONTH",
+    "startDateTime":"2022-06-16T12:04:00.099Z",
+    "endDateTime":"2024-06-30T23:59:59.999Z",
+    "lastRenewalDateTime":"None",
+    "nextRenewalDateTime":"None",
+    "autoRenew":false,
+    "sku":"U5WC-EDGC-REYH",
+    "price":43.56,
+    "priceUnit":"MONTH",
+    "assignedResourceId":"None"
+ }

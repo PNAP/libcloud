@@ -32,6 +32,30 @@ Create an SSH Key
 .. literalinclude:: /examples/compute/pnap_bmc/create_ssh_key.py
    :language: python
 
+Create a Tag
+~~~~~~~~~~~~
+
+.. literalinclude:: /examples/compute/pnap_bmc/create_tag.py
+   :language: python
+
+Create an IP Block
+~~~~~~~~~~~~~~~~~~
+
+.. literalinclude:: /examples/compute/pnap_bmc/create_ip_block.py
+   :language: python
+
+Create a Private Network
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. literalinclude:: /examples/compute/pnap_bmc/create_private_network.py
+   :language: python
+
+Create a Public Network
+~~~~~~~~~~~~~~~~~~~~~~~
+
+.. literalinclude:: /examples/compute/pnap_bmc/create_public_network.py
+   :language: python
+
 API Docs
 --------
 

@@ -1,0 +1,707 @@
+[
+    {
+      "metadata": {
+        "ramInGb": 256,
+        "cpu": "Dual Silver 4210R",
+        "cpuCount": 2,
+        "coresPerCpu": 10,
+        "cpuFrequency": 2.4,
+        "network": "2x 25Gbps",
+        "storage": "2x 2TB NVMe"
+      },
+      "productCode": "d1.c1.large",
+      "productCategory": "SERVER",
+      "plans": [
+        {
+          "sku": "FHSK-75WD-BZE2",
+          "skuDescription": "Server d1.c1.large Hourly Rate for PHX",
+          "location": "PHX",
+          "pricingModel": "HOURLY",
+          "price": 0.75,
+          "priceUnit": "HOUR",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "DZMQ-KWVR-ZO2A",
+          "skuDescription": "Server d1.c1.large 1 Month Reserved Instance Monthly Rate for PHX",
+          "location": "PHX",
+          "pricingModel": "ONE_MONTH_RESERVATION",
+          "price": 522.87,
+          "priceUnit": "MONTH",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "3BNN-IGJQ-ITWI",
+          "skuDescription": "Server d1.c1.large 12 Months Reserved Instance Monthly Rate for PHX",
+          "location": "PHX",
+          "pricingModel": "TWELVE_MONTHS_RESERVATION",
+          "price": 485.14,
+          "priceUnit": "MONTH",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "UZ3N-RQES-EIU4",
+          "skuDescription": "Server d1.c1.large 24 Months Reserved Instance Monthly Rate for PHX",
+          "location": "PHX",
+          "pricingModel": "TWENTY_FOUR_MONTHS_RESERVATION",
+          "price": 458.19,
+          "priceUnit": "MONTH",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "1UXF-4JEZ-JRNK",
+          "skuDescription": "Server d1.c1.large 36 Months Reserved Instance Monthly Rate for PHX",
+          "location": "PHX",
+          "pricingModel": "THIRTY_SIX_MONTHS_RESERVATION",
+          "price": 425.85,
+          "priceUnit": "MONTH",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "3TOG-0ASW-5A3T",
+          "skuDescription": "Server d1.c1.large Hourly Rate for ASH",
+          "location": "ASH",
+          "pricingModel": "HOURLY",
+          "price": 0.75,
+          "priceUnit": "HOUR",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "2D2M-ZDIW-4EEL",
+          "skuDescription": "Server d1.c1.large 1 Month Reserved Instance Monthly Rate for ASH",
+          "location": "ASH",
+          "pricingModel": "ONE_MONTH_RESERVATION",
+          "price": 522.87,
+          "priceUnit": "MONTH",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "XTPD-PTTF-FV1I",
+          "skuDescription": "Server d1.c1.large 12 Months Reserved Instance Monthly Rate for ASH",
+          "location": "ASH",
+          "pricingModel": "TWELVE_MONTHS_RESERVATION",
+          "price": 485.14,
+          "priceUnit": "MONTH",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "G1B3-QAGM-J2B9",
+          "skuDescription": "Server d1.c1.large 24 Months Reserved Instance Monthly Rate for ASH",
+          "location": "ASH",
+          "pricingModel": "TWENTY_FOUR_MONTHS_RESERVATION",
+          "price": 458.19,
+          "priceUnit": "MONTH",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "LDN6-IPS8-32DD",
+          "skuDescription": "Server d1.c1.large 36 Months Reserved Instance Monthly Rate for ASH",
+          "location": "ASH",
+          "pricingModel": "THIRTY_SIX_MONTHS_RESERVATION",
+          "price": 425.85,
+          "priceUnit": "MONTH",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "L5EM-GF04-YBHW",
+          "skuDescription": "Server d1.c1.large Hourly Rate for NLD",
+          "location": "NLD",
+          "pricingModel": "HOURLY",
+          "price": 0.75,
+          "priceUnit": "HOUR",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "DLOC-SNQI-AUZ1",
+          "skuDescription": "Server d1.c1.large 1 Month Reserved Instance Monthly Rate for NLD",
+          "location": "NLD",
+          "pricingModel": "ONE_MONTH_RESERVATION",
+          "price": 522.87,
+          "priceUnit": "MONTH",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "FKJ2-2ZS3-TN4I",
+          "skuDescription": "Server d1.c1.large 12 Months Reserved Instance Monthly Rate for NLD",
+          "location": "NLD",
+          "pricingModel": "TWELVE_MONTHS_RESERVATION",
+          "price": 485.14,
+          "priceUnit": "MONTH",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "WFEU-OBCC-V0WU",
+          "skuDescription": "Server d1.c1.large 24 Months Reserved Instance Monthly Rate for NLD",
+          "location": "NLD",
+          "pricingModel": "TWENTY_FOUR_MONTHS_RESERVATION",
+          "price": 458.19,
+          "priceUnit": "MONTH",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "T7ND-PQHR-CWIM",
+          "skuDescription": "Server d1.c1.large 36 Months Reserved Instance Monthly Rate for NLD",
+          "location": "NLD",
+          "pricingModel": "THIRTY_SIX_MONTHS_RESERVATION",
+          "price": 425.85,
+          "priceUnit": "MONTH",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "FURE-BDKW-B3BC",
+          "skuDescription": "Server d1.c1.large Hourly Rate for SGP",
+          "location": "SGP",
+          "pricingModel": "HOURLY",
+          "price": 0.75,
+          "priceUnit": "HOUR",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "RRLI-YEKA-MLRQ",
+          "skuDescription": "Server d1.c1.large 1 Month Reserved Instance Monthly Rate for SGP",
+          "location": "SGP",
+          "pricingModel": "ONE_MONTH_RESERVATION",
+          "price": 522.87,
+          "priceUnit": "MONTH",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "IOPS-ZSIL-VJVE",
+          "skuDescription": "Server d1.c1.large 12 Months Reserved Instance Monthly Rate for SGP",
+          "location": "SGP",
+          "pricingModel": "TWELVE_MONTHS_RESERVATION",
+          "price": 485.14,
+          "priceUnit": "MONTH",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "EMAM-RA5X-E9OL",
+          "skuDescription": "Server d1.c1.large 24 Months Reserved Instance Monthly Rate for SGP",
+          "location": "SGP",
+          "pricingModel": "TWENTY_FOUR_MONTHS_RESERVATION",
+          "price": 458.19,
+          "priceUnit": "MONTH",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "0ZIZ-SN6P-6PPZ",
+          "skuDescription": "Server d1.c1.large 36 Months Reserved Instance Monthly Rate for SGP",
+          "location": "SGP",
+          "pricingModel": "THIRTY_SIX_MONTHS_RESERVATION",
+          "price": 425.85,
+          "priceUnit": "MONTH",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        }
+      ]
+    },
+    {
+      "metadata": {
+        "ramInGb": 256,
+        "cpu": "Dual Silver 4210R",
+        "cpuCount": 2,
+        "coresPerCpu": 10,
+        "cpuFrequency": 2.4,
+        "network": "2x 25Gbps",
+        "storage": "2x 1TB NVMe"
+      },
+      "productCode": "d1.c1.medium",
+      "productCategory": "SERVER",
+      "plans": [
+        {
+          "sku": "RNA5-5ZSP-DGF5",
+          "skuDescription": "Server d1.c1.medium Hourly Rate for PHX",
+          "location": "PHX",
+          "pricingModel": "HOURLY",
+          "price": 0.55,
+          "priceUnit": "HOUR",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "MZQB-OBEG-2TD2",
+          "skuDescription": "Server d1.c1.medium 1 Month Reserved Instance Monthly Rate for PHX",
+          "location": "PHX",
+          "pricingModel": "ONE_MONTH_RESERVATION",
+          "price": 376.87,
+          "priceUnit": "MONTH",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "EI50-LNXB-VQDH",
+          "skuDescription": "Server d1.c1.medium 12 Months Reserved Instance Monthly Rate for PHX",
+          "location": "PHX",
+          "pricingModel": "TWELVE_MONTHS_RESERVATION",
+          "price": 349.36,
+          "priceUnit": "MONTH",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "MAAI-FNJQ-EMV5",
+          "skuDescription": "Server d1.c1.medium 24 Months Reserved Instance Monthly Rate for PHX",
+          "location": "PHX",
+          "pricingModel": "TWENTY_FOUR_MONTHS_RESERVATION",
+          "price": 329.71,
+          "priceUnit": "MONTH",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "WU0Q-7BDK-BIVN",
+          "skuDescription": "Server d1.c1.medium 36 Months Reserved Instance Monthly Rate for PHX",
+          "location": "PHX",
+          "pricingModel": "THIRTY_SIX_MONTHS_RESERVATION",
+          "price": 306.13,
+          "priceUnit": "MONTH",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "QF1H-5XFC-2HNC",
+          "skuDescription": "Server d1.c1.medium Hourly Rate for ASH",
+          "location": "ASH",
+          "pricingModel": "HOURLY",
+          "price": 0.55,
+          "priceUnit": "HOUR",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "CMET-AZ01-XSGJ",
+          "skuDescription": "Server d1.c1.medium 1 Month Reserved Instance Monthly Rate for ASH",
+          "location": "ASH",
+          "pricingModel": "ONE_MONTH_RESERVATION",
+          "price": 376.87,
+          "priceUnit": "MONTH",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "483P-TXUX-MNAZ",
+          "skuDescription": "Server d1.c1.medium 12 Months Reserved Instance Monthly Rate for ASH",
+          "location": "ASH",
+          "pricingModel": "TWELVE_MONTHS_RESERVATION",
+          "price": 349.36,
+          "priceUnit": "MONTH",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "QRMX-QO6F-INDD",
+          "skuDescription": "Server d1.c1.medium 24 Months Reserved Instance Monthly Rate for ASH",
+          "location": "ASH",
+          "pricingModel": "TWENTY_FOUR_MONTHS_RESERVATION",
+          "price": 329.71,
+          "priceUnit": "MONTH",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "GEQW-WMOS-MRGF",
+          "skuDescription": "Server d1.c1.medium 36 Months Reserved Instance Monthly Rate for ASH",
+          "location": "ASH",
+          "pricingModel": "THIRTY_SIX_MONTHS_RESERVATION",
+          "price": 306.13,
+          "priceUnit": "MONTH",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "PYCJ-T6IP-KZT1",
+          "skuDescription": "Server d1.c1.medium Hourly Rate for NLD",
+          "location": "NLD",
+          "pricingModel": "HOURLY",
+          "price": 0.55,
+          "priceUnit": "HOUR",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "UNE4-YSEW-7B7T",
+          "skuDescription": "Server d1.c1.medium 1 Month Reserved Instance Monthly Rate for NLD",
+          "location": "NLD",
+          "pricingModel": "ONE_MONTH_RESERVATION",
+          "price": 376.87,
+          "priceUnit": "MONTH",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "GMVK-ZTZX-FQTV",
+          "skuDescription": "Server d1.c1.medium 12 Months Reserved Instance Monthly Rate for NLD",
+          "location": "NLD",
+          "pricingModel": "TWELVE_MONTHS_RESERVATION",
+          "price": 349.36,
+          "priceUnit": "MONTH",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "RV7B-PXBH-LNG6",
+          "skuDescription": "Server d1.c1.medium 24 Months Reserved Instance Monthly Rate for NLD",
+          "location": "NLD",
+          "pricingModel": "TWENTY_FOUR_MONTHS_RESERVATION",
+          "price": 329.71,
+          "priceUnit": "MONTH",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "N54P-2UXV-VNCL",
+          "skuDescription": "Server d1.c1.medium 36 Months Reserved Instance Monthly Rate for NLD",
+          "location": "NLD",
+          "pricingModel": "THIRTY_SIX_MONTHS_RESERVATION",
+          "price": 306.13,
+          "priceUnit": "MONTH",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "NIW0-6J5V-A0NX",
+          "skuDescription": "Server d1.c1.medium Hourly Rate for SGP",
+          "location": "SGP",
+          "pricingModel": "HOURLY",
+          "price": 0.55,
+          "priceUnit": "HOUR",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "Q76Y-P3NX-QXOP",
+          "skuDescription": "Server d1.c1.medium 1 Month Reserved Instance Monthly Rate for SGP",
+          "location": "SGP",
+          "pricingModel": "ONE_MONTH_RESERVATION",
+          "price": 376.87,
+          "priceUnit": "MONTH",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "WZIE-QJXZ-FQQN",
+          "skuDescription": "Server d1.c1.medium 12 Months Reserved Instance Monthly Rate for SGP",
+          "location": "SGP",
+          "pricingModel": "TWELVE_MONTHS_RESERVATION",
+          "price": 349.36,
+          "priceUnit": "MONTH",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "8VXJ-DYTI-XHAG",
+          "skuDescription": "Server d1.c1.medium 24 Months Reserved Instance Monthly Rate for SGP",
+          "location": "SGP",
+          "pricingModel": "TWENTY_FOUR_MONTHS_RESERVATION",
+          "price": 329.71,
+          "priceUnit": "MONTH",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "AJAY-T8LU-2Q2B",
+          "skuDescription": "Server d1.c1.medium 36 Months Reserved Instance Monthly Rate for SGP",
+          "location": "SGP",
+          "pricingModel": "THIRTY_SIX_MONTHS_RESERVATION",
+          "price": 306.13,
+          "priceUnit": "MONTH",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        }
+      ]
+    },
+    {
+      "metadata": {
+        "ramInGb": 128,
+        "cpu": "Dual Silver 4210R",
+        "cpuCount": 2,
+        "coresPerCpu": 10,
+        "cpuFrequency": 2.4,
+        "network": "2x 25Gbps",
+        "storage": "2x 1TB NVMe"
+      },
+      "productCode": "d1.c1.small",
+      "productCategory": "SERVER",
+      "plans": [
+        {
+          "sku": "NS4J-A3PT-SY2F",
+          "skuDescription": "Server d1.c1.small Hourly Rate for PHX",
+          "location": "PHX",
+          "pricingModel": "HOURLY",
+          "price": 0.42,
+          "priceUnit": "HOUR",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "P2NY-RSFQ-CX9Y",
+          "skuDescription": "Server d1.c1.small 1 Month Reserved Instance Monthly Rate for PHX",
+          "location": "PHX",
+          "pricingModel": "ONE_MONTH_RESERVATION",
+          "price": 278.87,
+          "priceUnit": "MONTH",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "EY5M-JI3E-OGZJ",
+          "skuDescription": "Server d1.c1.small 12 Months Reserved Instance Monthly Rate for PHX",
+          "location": "PHX",
+          "pricingModel": "TWELVE_MONTHS_RESERVATION",
+          "price": 258.22,
+          "priceUnit": "MONTH",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "CVYA-9MRN-NVHS",
+          "skuDescription": "Server d1.c1.small 24 Months Reserved Instance Monthly Rate for PHX",
+          "location": "PHX",
+          "pricingModel": "TWENTY_FOUR_MONTHS_RESERVATION",
+          "price": 243.47,
+          "priceUnit": "MONTH",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "PXG2-D7PK-BYAY",
+          "skuDescription": "Server d1.c1.small 36 Months Reserved Instance Monthly Rate for PHX",
+          "location": "PHX",
+          "pricingModel": "THIRTY_SIX_MONTHS_RESERVATION",
+          "price": 225.77,
+          "priceUnit": "MONTH",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "SGVC-YJIM-N6U0",
+          "skuDescription": "Server d1.c1.small Hourly Rate for ASH",
+          "location": "ASH",
+          "pricingModel": "HOURLY",
+          "price": 0.42,
+          "priceUnit": "HOUR",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "PAEM-ZINV-OZAK",
+          "skuDescription": "Server d1.c1.small 1 Month Reserved Instance Monthly Rate for ASH",
+          "location": "ASH",
+          "pricingModel": "ONE_MONTH_RESERVATION",
+          "price": 278.87,
+          "priceUnit": "MONTH",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "38ZZ-M3UC-JJYF",
+          "skuDescription": "Server d1.c1.small 12 Months Reserved Instance Monthly Rate for ASH",
+          "location": "ASH",
+          "pricingModel": "TWELVE_MONTHS_RESERVATION",
+          "price": 258.22,
+          "priceUnit": "MONTH",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "AIZS-PIKR-YSMI",
+          "skuDescription": "Server d1.c1.small 24 Months Reserved Instance Monthly Rate for ASH",
+          "location": "ASH",
+          "pricingModel": "TWENTY_FOUR_MONTHS_RESERVATION",
+          "price": 243.47,
+          "priceUnit": "MONTH",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "FDKG-RUMT-1ISA",
+          "skuDescription": "Server d1.c1.small 36 Months Reserved Instance Monthly Rate for ASH",
+          "location": "ASH",
+          "pricingModel": "THIRTY_SIX_MONTHS_RESERVATION",
+          "price": 225.77,
+          "priceUnit": "MONTH",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "CGUQ-EMXQ-DM0J",
+          "skuDescription": "Server d1.c1.small Hourly Rate for NLD",
+          "location": "NLD",
+          "pricingModel": "HOURLY",
+          "price": 0.42,
+          "priceUnit": "HOUR",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "7XAP-PYWO-4T2L",
+          "skuDescription": "Server d1.c1.small 1 Month Reserved Instance Monthly Rate for NLD",
+          "location": "NLD",
+          "pricingModel": "ONE_MONTH_RESERVATION",
+          "price": 278.87,
+          "priceUnit": "MONTH",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "YY5E-C6L0-MQ4U",
+          "skuDescription": "Server d1.c1.small 12 Months Reserved Instance Monthly Rate for NLD",
+          "location": "NLD",
+          "pricingModel": "TWELVE_MONTHS_RESERVATION",
+          "price": 258.22,
+          "priceUnit": "MONTH",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "KAT4-BLMY-4IDE",
+          "skuDescription": "Server d1.c1.small 24 Months Reserved Instance Monthly Rate for NLD",
+          "location": "NLD",
+          "pricingModel": "TWENTY_FOUR_MONTHS_RESERVATION",
+          "price": 243.47,
+          "priceUnit": "MONTH",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "TPNQ-QWFS-APKV",
+          "skuDescription": "Server d1.c1.small 36 Months Reserved Instance Monthly Rate for NLD",
+          "location": "NLD",
+          "pricingModel": "THIRTY_SIX_MONTHS_RESERVATION",
+          "price": 225.77,
+          "priceUnit": "MONTH",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "RHO3-QYMH-NOJH",
+          "skuDescription": "Server d1.c1.small Hourly Rate for SGP",
+          "location": "SGP",
+          "pricingModel": "HOURLY",
+          "price": 0.42,
+          "priceUnit": "HOUR",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "LDUC-YSCO-D3UJ",
+          "skuDescription": "Server d1.c1.small 1 Month Reserved Instance Monthly Rate for SGP",
+          "location": "SGP",
+          "pricingModel": "ONE_MONTH_RESERVATION",
+          "price": 278.87,
+          "priceUnit": "MONTH",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "8XQQ-52QH-EHWW",
+          "skuDescription": "Server d1.c1.small 12 Months Reserved Instance Monthly Rate for SGP",
+          "location": "SGP",
+          "pricingModel": "TWELVE_MONTHS_RESERVATION",
+          "price": 258.22,
+          "priceUnit": "MONTH",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "3MOE-W3DS-IIEL",
+          "skuDescription": "Server d1.c1.small 24 Months Reserved Instance Monthly Rate for SGP",
+          "location": "SGP",
+          "pricingModel": "TWENTY_FOUR_MONTHS_RESERVATION",
+          "price": 243.47,
+          "priceUnit": "MONTH",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        },
+        {
+          "sku": "GWDZ-RMV4-L4Y3",
+          "skuDescription": "Server d1.c1.small 36 Months Reserved Instance Monthly Rate for SGP",
+          "location": "SGP",
+          "pricingModel": "THIRTY_SIX_MONTHS_RESERVATION",
+          "price": 225.77,
+          "priceUnit": "MONTH",
+          "correlatedProductCode": null,
+          "packageQuantity": null,
+          "packageUnit": null
+        }
+      ]
+    }
+  ]

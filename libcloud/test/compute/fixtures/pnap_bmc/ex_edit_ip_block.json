@@ -1,0 +1,10 @@
+{
+    "id": "6047127fed34ecc3ba8402d2",
+    "cidr": "1.1.1.0/31",
+    "location": "PHX",
+    "cidrBlockSize": "/31",
+    "status": "unassigned",
+    "description": "edit",
+    "isBringYourOwn": false,
+    "createdOn": "2021-03-13T20:24:32.491Z"
+}

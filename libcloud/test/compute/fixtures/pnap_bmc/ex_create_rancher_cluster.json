@@ -1,0 +1,24 @@
+{
+    "id": "60a773b89fd9035858ce8902",
+    "name": "Rancher Deployment",
+    "description": "A Rancher Server deployment.",
+    "location": "PHX",
+    "initialClusterVersion": "v2.5.9",
+    "metadata": {
+      "url": "https://rancher",
+      "username": "admin",
+      "password": "1234567890abcd!"
+    },
+    "nodePools": [
+      {
+        "name": "Rancher Server Node Pool",
+        "nodeCount": 1,
+        "serverType": "s0.d1.small",
+        "nodes": [
+          {
+            "serverId": "60b08f04adab617be44068bb"
+          }
+        ]
+      }
+    ]
+  }
