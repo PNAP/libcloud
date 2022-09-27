@@ -1,0 +1,73 @@
+[
+    {
+        "id":"603f3b2cfcaf050643b89a4b",
+        "name":"test",
+        "description":"desc",
+        "status":"BUSY",
+        "location":"PHX",
+        "networkId":"603f3b2cfcaf050643b89a4b",
+        "ips":[
+        "100.64.0.1",
+        "100.64.0.2"
+        ],
+        "createdOn":"2022-09-12T08:38:51.712Z",
+        "volumes":[
+        {
+            "id":"50dc434c-9bba-427b-bcd6-0bdba45c4dd2",
+            "name":"myvolume",
+            "path":"/qjul77ahf5fplr2ba484/shared-docs",
+            "capacityInGb":1000,
+            "protocol":"NFS",
+            "status":"BUSY",
+            "createdOn":"2022-09-12T08:38:51.727222Z",
+            "permissions":{
+                "nfs":{
+                    "readWrite":[
+                        "100.80.0.5"
+                    ],
+                    "readOnly":[
+                    
+                    ],
+                    "rootSquash":[
+                        "100.80.0.5"
+                    ],
+                    "noSquash":[
+                    
+                    ],
+                    "allSquash":[
+                    
+                    ]
+                }
+            }
+        },
+        {
+            "id":"12345",
+            "name":"myvolume-test",
+            "path":"/qjul77ahf5fplr2ba484/shared-docs",
+            "capacityInGb":1000,
+            "protocol":"NFS",
+            "status":"BUSY",
+            "createdOn":"2022-09-12T08:38:51.727222Z",
+            "permissions":{
+                "nfs":{
+                    "readWrite":[
+                        "100.80.0.5"
+                    ],
+                    "readOnly":[
+                    
+                    ],
+                    "rootSquash":[
+                        "100.80.0.5"
+                    ],
+                    "noSquash":[
+                    
+                    ],
+                    "allSquash":[
+                    
+                    ]
+                }
+            }
+        }
+        ]
+    }
+]

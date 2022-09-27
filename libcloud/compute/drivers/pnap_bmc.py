@@ -28,6 +28,7 @@ from libcloud.common.pnap_bmc import (
     PnapBmcIpBlock,
     PnapBmcPrivateNetwork,
     PnapBmcPublicNetwork,
+    PnapBmcStorageNetwork,
 )
 from libcloud.compute.providers import Provider
 from libcloud.compute.base import (
@@ -197,6 +198,7 @@ class PnapBmcNodeDriver(NodeDriver):
         ex_pricing_model="HOURLY",
         ex_network_type="PUBLIC_AND_PRIVATE",
         ex_rdp_allowed_ips=None,
+        ex_install_os_to_ram=False,
     ):
         """
         Create a node.
@@ -286,6 +288,12 @@ class PnapBmcNodeDriver(NodeDriver):
                                      use 0.0.0.0/0
         :type    ex_rdp_allowed_ips: ``list`` of ``str``
 
+        :keyword ex_install_os_to_ram: If true, OS will be installed to
+                                       and booted from the server's RAM.
+                                       If true, OS will be installed to
+                                       and booted from the server's RAM.
+        :type    ex_install_os_to_ram: ``bool``
+
         :return: The newly created node.
         :rtype: :class:`Node`
         """
@@ -316,6 +324,7 @@ class PnapBmcNodeDriver(NodeDriver):
             "osConfiguration": {
                 "managementAccessAllowedIps": ex_management_access_allowed_ips,
                 "windows": {"rdpAllowedIps": ex_rdp_allowed_ips},
+                "installOsToRam": ex_install_os_to_ram,
             },
             "tags": ex_tags,
         }
@@ -1475,6 +1484,132 @@ class PnapBmcNodeDriver(NodeDriver):
         """
         return self._delete_resource("cluster", cluster_id)
 
+    def ex_create_storage_network(self, name, location, volumes, description=None):
+        """
+        Create a storage network and volume.
+
+        :param: name: Storage network friendly name. (required)
+        :type:  name: ``str``
+
+        :param: location: Location of storage network. (required)
+        :type:  location: ``str``
+
+        :param: voulmes: Volume to be created alongside storage. (required)
+        :type:  volumes: ``list`` of ``dict`` :
+                         [{
+                            "name": "My volume name",
+                            "description": "My volume description",
+                            "pathSuffix": "/shared-docs",
+                            "capacityInGb": 1000
+                         }]
+
+        :param: description: Storage network description.
+        :type:  description: ``str``
+
+        :rtype: :class:`PnapBmcStorageNetwork`
+        """
+        if isinstance(volumes, dict):
+            volumes = [volumes]
+        data = {
+            "name": name,
+            "location": location,
+            "volumes": volumes,
+            "description": description,
+        }
+        return self._create_resource("storage_network", data)
+
+    def ex_list_storage_networks(self):
+        """
+        List all Storage Networks owned by account.
+
+        :rtype: ``list`` of :class:`PnapBmcStorageNetwork`
+        """
+        return self._list_resources("storage_network")
+
+    def ex_get_storage_network_by_name(self, name):
+        """
+        Get a specific Storage Network by name
+
+        :param name: Name of the Storage Network you want (required)
+        :type  name: ``str``
+
+        :rtype: :class:`PnapBmcStorageNetwork` or `None`
+        """
+        return self._get_resource("storage_network", name)
+
+    def ex_edit_storage_network(self, storage_network, name=None, description=None):
+        """
+        Edit an existing Storage Network.
+
+        :param: storage_network:  The Storage Network you
+                                  want to edit (required)
+
+        :type:  storage_network: :class:`PnapBmcStorageNetwork`
+
+        :param: name: New name of the Storage Network.
+        :type:  name: ``str``
+
+        :param: description: New description of Storage Network.
+        :type:  description: ``str``
+
+        :rtype: :class:`PnapBmcStorageNetwork`
+        """
+        if name is None:
+            name = storage_network.name
+        if description is None:
+            description = storage_network.description
+        data = {
+            "name": name,
+            "description": description,
+        }
+        return self._edit_resource("storage_network", storage_network, data, "PATCH")
+
+    def ex_delete_storage_network(self, storage_network):
+        """
+        Delete an existing Storage Network.
+
+        :param: storage_network: The Storage Network
+                                 you want to delete (required)
+        :type   storage_network: :class:`PnapBmcStorageNetwork`
+
+        :return: True on success
+        :rtype: ``bool``
+        """
+        return self._delete_resource("storage_network", storage_network)
+
+    def ex_get_volumes_by_storage_network_id(self, storage_network_id):
+        """
+        Display one or more volumes belonging to a storage network.
+
+        :param: storage_network_id: ID of storage network.
+        :type   storage_network_id: ``str``
+
+        :rtype: ``list`` of ``dict``
+        """
+        return self._edit_resource_by_id(
+            "storage_network",
+            storage_network_id,
+            "/volumes",
+            method="GET",
+            check_class=False,
+        )
+
+    def ex_get_volume_by_id(self, volume_id):
+        """
+        Get a storage network's volume details.
+
+        :param: volume_id: ID of volume.
+        :type   volume_id: ``str``
+
+        :rtype: ``dict`` or None
+        """
+        storages = self.ex_list_storage_networks()
+        for storage in storages:
+            return next(
+                volume for volume in storage.volumes if volume["id"] == volume_id
+            )
+        return None
+
     def _to_key_pair(self, data):
         extra = {
             "id": data.get("id"),
@@ -1541,6 +1676,19 @@ class PnapBmcNodeDriver(NodeDriver):
             location=data.get("location"),
             ip_blocks=data.get("ipBlocks"),
             created_on=data.get("createdOn"),
+        )
+
+    def _to_storage_network(self, data):
+        return PnapBmcStorageNetwork(
+            id=data.get("id"),
+            name=data.get("name"),
+            description=data.get("description"),
+            status=data.get("status"),
+            location=data.get("location"),
+            network_id=data.get("networkId"),
+            ips=data.get("ips"),
+            created_on=data.get("createdOn"),
+            volumes=data.get("volumes"),
         )
 
     def _to_node(self, data):

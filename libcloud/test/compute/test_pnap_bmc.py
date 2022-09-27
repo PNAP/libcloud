@@ -437,6 +437,51 @@ class PnapBmcTest(unittest.TestCase, TestCaseMixin):
     def test_ex_delete_rancher_cluster_by_id(self):
         self.assertTrue(self.driver.ex_delete_rancher_cluster_by_id("123"))
 
+    def test_ex_create_storage_network(self):
+        storage_network = self.driver.ex_create_storage_network(
+            "test", "PHX", {"name": "myvolume", "capacityInGb": 1000}, "desc"
+        )
+        self.assertEqual("test create", storage_network.name)
+        self.assertEqual("PHX", storage_network.location)
+        self.assertEqual("desc", storage_network.description)
+        self.assertEqual("myvolume", storage_network.volumes[0]["name"])
+        self.assertEqual(1000, storage_network.volumes[0]["capacityInGb"])
+
+    def test_ex_list_storage_networks(self):
+        storage_networks = self.driver.ex_list_storage_networks()
+        self.assertEqual(1, len(storage_networks))
+        self.assertEqual("test", storage_networks[0].name)
+
+    def test_ex_get_storage_network_by_name(self):
+        storage_network = self.driver.ex_get_storage_network_by_name("test")
+        self.assertEqual("test", storage_network.name)
+
+    def test_ex_edit_storage_network_param_name(self):
+        storage_network = self.driver.ex_get_storage_network_by_name("test")
+        storage_network_edit = self.driver.ex_edit_storage_network(
+            storage_network, name="test edit"
+        )
+        self.assertEqual("test edit", storage_network_edit.name)
+
+    def test_ex_edit_storage_network_param_description(self):
+        storage_network = self.driver.ex_get_storage_network_by_name("test")
+        storage_network_edit = self.driver.ex_edit_storage_network(
+            storage_network, description="desc edit"
+        )
+        self.assertEqual("desc edit", storage_network_edit.description)
+
+    def test_ex_delete_storage_network(self):
+        storage_network = self.driver.ex_get_storage_network_by_name("test")
+        self.assertTrue(self.driver.ex_delete_storage_network(storage_network))
+
+    def test_ex_get_volumes_by_storage_network_id(self):
+        volumes = self.driver.ex_get_volumes_by_storage_network_id("123")
+        self.assertEqual("myvolume", volumes[0]["name"])
+
+    def test_ex_get_volume_by_id(self):
+        volume = self.driver.ex_get_volume_by_id("12345")
+        self.assertEqual("myvolume-test", volume["name"])
+
 
 class PnapBmcMockHttp(MockHttp):
     fixtures = ComputeFileFixtures("pnap_bmc")
@@ -657,6 +702,28 @@ class PnapBmcMockHttp(MockHttp):
 
     def _solutions_rancher_v1beta_clusters_123(self, method, url, body, headers):
         body = self.fixtures.load("ex_delete_rancher_cluster.json")
+        return (httplib.ACCEPTED, body, {}, httplib.responses[httplib.ACCEPTED])
+
+    def _network_storage_v1_storage_networks(self, method, url, body, headers):
+        if method == "GET":
+            body = self.fixtures.load("ex_list_storage_networks.json")
+        else:
+            body = self.fixtures.load("ex_create_storage_network.json")
+        return (httplib.ACCEPTED, body, {}, httplib.responses[httplib.ACCEPTED])
+
+    def _network_storage_v1_storage_networks_603f3b2cfcaf050643b89a4b(
+        self, method, url, body, headers
+    ):
+        if method == "DELETE":
+            body = self.fixtures.load("ex_delete_storage_network.json")
+        else:
+            body = self.fixtures.load("ex_edit_storage_network.json")
+        return (httplib.ACCEPTED, body, {}, httplib.responses[httplib.ACCEPTED])
+
+    def _network_storage_v1_storage_networks_123_volumes(
+        self, method, url, body, headers
+    ):
+        body = self.fixtures.load("ex_get_volumes_by_storage_network_id.json")
         return (httplib.ACCEPTED, body, {}, httplib.responses[httplib.ACCEPTED])
 
 

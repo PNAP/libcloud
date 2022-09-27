@@ -37,6 +37,7 @@ API_ENDPOINTS = {
     "EVENT": "/audit/v1/events/",
     "RESERVATION": "/billing/v1/reservations/",
     "CLUSTER": "/solutions/rancher/v1beta/clusters/",
+    "STORAGE_NETWORK": "/network-storage/v1/storage-networks/",
 }
 
 NODE_STATE_MAP = {
@@ -439,9 +440,88 @@ class PnapBmcPublicNetwork:
         )
 
 
+class PnapBmcStorageNetwork:
+    """
+    A representation of a Storage Network in phoenixNAP BMC.
+    Use storage networks to expand storage capacity on a private network.
+    """
+
+    def __init__(
+        self,
+        id,
+        name,
+        description,
+        status,
+        location,
+        network_id,
+        ips,
+        created_on,
+        volumes,
+    ):
+        """
+        Initialize an instance of :class:`PnapBmcStorageNetwork`
+
+        :param id: Storage network ID.
+        :type  id: ``str``
+
+        :param name: Storage network friendly name.
+        :type  name: ``str``
+
+        :param description: Storage network description.
+        :type  description: ``str``
+
+        :param status: Status of the resource.
+        :type  status: ``str``
+
+        :param location: The location of storage network.
+        :type  location: ``str``
+
+        :param network_id: Id of network the storage belongs to.
+        :type  network_id: ``str``
+
+        :param ips: IP of the storage network.
+        :type  ips: ``list`` of ``str``
+
+        :param created_on: Date and time when this storage network was created.
+        :type  created_on: ``str``
+
+        :param volumes: Volume for a storage network.
+        :type  volumes: ``list`` of ``dict``
+        """
+
+        self.id = id
+        self.name = name
+        self.description = description
+        self.status = status
+        self.location = location
+        self.network_id = network_id
+        self.ips = ips
+        self.created_on = created_on
+        self.volumes = volumes
+
+    def __repr__(self):
+        return (
+            "<PnapBmcStorageNetwork: id=%s, name=%s, description=%s,"
+            "status=%s, location=%s, network_id=%s, ips=%s,"
+            "created_on=%s, volumes=%s>"
+            % (
+                self.id,
+                self.name,
+                self.description,
+                self.status,
+                self.location,
+                self.network_id,
+                self.ips,
+                self.created_on,
+                self.volumes,
+            )
+        )
+
+
 PNAP_BMC_TYPES = {
     "tag": PnapBmcTag,
     "ip_block": PnapBmcIpBlock,
     "private_network": PnapBmcPrivateNetwork,
     "public_network": PnapBmcPublicNetwork,
+    "storage_network": PnapBmcStorageNetwork,
 }
