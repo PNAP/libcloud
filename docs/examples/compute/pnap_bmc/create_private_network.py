@@ -18,5 +18,5 @@ print(private_network)
    # print(private_networks)
 
 # Delete the Private Network
-# private_network = driver.ex_get_private_network_by_name('my_private_network')
+# private_network = driver.ex_get_private_network('my_private_network')
 # driver.ex_delete_private_network(private_network)

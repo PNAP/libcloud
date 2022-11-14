@@ -19,5 +19,5 @@ print(storage_network)
 #    print(storage_networks)
 
 # Delete the Storage Network
-# storage_network = driver.ex_get_storage_network_by_name('My storage network')
+# storage_network = driver.ex_get_storage_network('My storage network')
 # driver.ex_delete_storage_network(storage_network)

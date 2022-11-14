@@ -81,6 +81,7 @@ class PnapBmcNodeDriver(NodeDriver):
             NodeImage("ubuntu/bionic", "ubuntu/bionic", self),
             NodeImage("ubuntu/focal", "ubuntu/focal", self),
             NodeImage("centos/centos7", "centos/centos7", self),
+            NodeImage("centos/centos8", "centos/centos8", self),
             NodeImage("windows/srv2019std", "windows/srv2019std", self),
             NodeImage("windows/srv2019dc", "windows/srv2019dc", self),
             NodeImage("esxi/esxi70u2", "esxi/esxi70u2", self),
@@ -104,6 +105,24 @@ class PnapBmcNodeDriver(NodeDriver):
             locations = set()
             [locations.add(plan["location"]) for plan in ser["plans"]]
             if location is None or location in locations:
+                plans = []
+                for plan in ser["plans"]:
+                    if location is None:
+                        plans.append(plan)
+                    elif plan["location"] == location:
+                        plans.append(plan)
+
+                extra = {
+                    "selectedLocation": location,
+                    "cpu": ser["metadata"]["cpu"],
+                    "cpuCount": ser["metadata"]["cpuCount"],
+                    "cpuFrequency": ser["metadata"]["cpuFrequency"],
+                    "coresPerCpu": ser["metadata"]["coresPerCpu"],
+                    "network": ser["metadata"]["network"],
+                    "storage": ser["metadata"]["storage"],
+                    "plans": plans,
+                }
+
                 sizes.append(
                     NodeSize(
                         ser["productCode"],
@@ -112,7 +131,8 @@ class PnapBmcNodeDriver(NodeDriver):
                         None,
                         None,
                         None,
-                        self,
+                        extra=extra,
+                        driver=self,
                     )
                 )
         return sizes
@@ -183,7 +203,7 @@ class PnapBmcNodeDriver(NodeDriver):
         image,
         location,
         ex_ip_blocks_configuration_type=None,
-        ex_ip_blocks_id=None,
+        ex_ip_blocks_ids=None,
         ex_management_access_allowed_ips=None,
         ex_gateway_address=None,
         ex_private_network_configuration_type=None,
@@ -195,10 +215,11 @@ class PnapBmcNodeDriver(NodeDriver):
         ex_install_default_ssh_keys=True,
         ex_ssh_key_ids=None,
         ex_reservation_id=None,
-        ex_pricing_model="HOURLY",
-        ex_network_type="PUBLIC_AND_PRIVATE",
+        ex_pricing_model=None,
+        ex_network_type=None,
         ex_rdp_allowed_ips=None,
         ex_install_os_to_ram=False,
+        ex_cloud_init_user_data=None,
     ):
         """
         Create a node.
@@ -208,10 +229,10 @@ class PnapBmcNodeDriver(NodeDriver):
                                                  the server being provisioned.
         :type    ip_blocks_configuration_type: ``str``
 
-        :keyword ex_ip_blocks_id: Used to specify the previously purchase
+        :keyword ex_ip_blocks_ids: Used to specify the previously purchase
                                   IP blocks to assign to this server upon
                                   provisioning.
-        :type    ex_ip_blocks_id: ``list`` of ``dict``
+        :type    ex_ip_blocks_ids: ``list`` of ``dict``
                                   ip_blocks elements: id (``str``)
 
         :keyword ex_management_access_allowed_ips: List of IPs allowed to
@@ -294,17 +315,22 @@ class PnapBmcNodeDriver(NodeDriver):
                                        and booted from the server's RAM.
         :type    ex_install_os_to_ram: ``bool``
 
+        :keyword ex_cloud_init_user_data: User data for the cloud-init configuration in base64
+                                          encoding. NoCloud format is supported.
+        :type    ex_cloud_init_user_data: ``str``
+
         :return: The newly created node.
         :rtype: :class:`Node`
         """
+
         data = {
             "hostname": name,
             "type": size.id,
             "os": image.id,
             "location": location.id,
             "description": ex_description,
-            "sshKeys": ex_ssh_keys,
-            "sshKeyIds": ex_ssh_key_ids,
+            "sshKeys": self._ensure_list(ex_ssh_keys),
+            "sshKeyIds": self._ensure_list(ex_ssh_key_ids),
             "installDefaultSshKeys": ex_install_default_ssh_keys,
             "reservationId": ex_reservation_id,
             "pricingModel": ex_pricing_model,
@@ -313,22 +339,26 @@ class PnapBmcNodeDriver(NodeDriver):
                 "gatewayAddress": ex_gateway_address,
                 "privateNetworkConfiguration": {
                     "configurationType": ex_private_network_configuration_type,
-                    "privateNetworks": ex_private_networks,
+                    "privateNetworks": self._ensure_list(ex_private_networks),
                 },
                 "ipBlocksConfiguration": {
                     "configurationType": ex_ip_blocks_configuration_type,
-                    "ipBlocks": ex_ip_blocks_id,
+                    "ipBlocks": self._ensure_list(ex_ip_blocks_ids),
                 },
-                "publicNetworkConfiguration": {"publicNetworks": ex_public_networks},
+                "publicNetworkConfiguration": {
+                    "publicNetworks": self._ensure_list(ex_public_networks)
+                },
             },
             "osConfiguration": {
-                "managementAccessAllowedIps": ex_management_access_allowed_ips,
-                "windows": {"rdpAllowedIps": ex_rdp_allowed_ips},
+                "managementAccessAllowedIps": self._ensure_list(
+                    ex_management_access_allowed_ips
+                ),
+                "windows": {"rdpAllowedIps": self._ensure_list(ex_rdp_allowed_ips)},
                 "installOsToRam": ex_install_os_to_ram,
+                "cloudInit": {"userData": ex_cloud_init_user_data},
             },
-            "tags": ex_tags,
+            "tags": self._ensure_list(ex_tags),
         }
-
         return self._create_resource("node", data)
 
     def list_key_pairs(self):
@@ -447,16 +477,16 @@ class PnapBmcNodeDriver(NodeDriver):
         """
         return self._node_action(node, "power-off")
 
-    def ex_get_node_by_name(self, name):
+    def ex_get_node(self, name):
         """
-        Get a specific node by name
+        Get a specific node by name.
 
-        :param name: Name of the node you want (required)
+        :param name: The name of the Node.
         :type  name: ``str``
 
         :rtype: :class:`Node` or `None`
         """
-        return self._get_resource("node", name)
+        return self._get_resource("node", name, resource_key="hostname")
 
     def ex_edit_node(self, node, description=None, name=None):
         """
@@ -490,7 +520,7 @@ class PnapBmcNodeDriver(NodeDriver):
         :rtype: :class:``Node``
         """
         return self._edit_resource_by_id(
-            "node", node.id, "/tags", data=tags, method="PUT"
+            "node", node.id, "/tags", data=self._ensure_list(tags), method="PUT"
         )
 
     def ex_edit_node_add_ip_block(self, node, ip_block, vlan_id=None):
@@ -744,11 +774,11 @@ class PnapBmcNodeDriver(NodeDriver):
         """
         return self._list_resources("tag")
 
-    def ex_get_tag_by_name(self, name):
+    def ex_get_tag(self, name):
         """
-        Get a specific tag key by name
+        Get a specific tag by name.
 
-        :param name: Name of the tag you want (required)
+        :param name: The name of the tag.
         :type  name: ``str``
 
         :rtype: :class:`PnapBmcTag` or `None`
@@ -828,7 +858,7 @@ class PnapBmcNodeDriver(NodeDriver):
             "location": location,
             "cidrBlockSize": cidr_block_size,
             "description": description,
-            "tags": tags,
+            "tags": self._ensure_list(tags),
         }
         return self._create_resource("ip_block", data)
 
@@ -849,7 +879,7 @@ class PnapBmcNodeDriver(NodeDriver):
 
         :rtype: :class:`PnapBmcIpBlock` or `None`
         """
-        return self._get_resource("ip_block", id)
+        return self._get_resource_by_id("ip_block", id)
 
     def ex_edit_ip_block_by_id(self, id, description):
         """
@@ -884,7 +914,7 @@ class PnapBmcNodeDriver(NodeDriver):
         :rtype: :class:`PnapBmcIpBlock`
         """
         return self._edit_resource_by_id(
-            "ip_block", id, "/tags", data=tags, method="PUT"
+            "ip_block", id, "/tags", data=self._ensure_list(tags), method="PUT"
         )
 
     def ex_delete_ip_block_by_id(self, id):
@@ -942,11 +972,11 @@ class PnapBmcNodeDriver(NodeDriver):
         """
         return self._list_resources("private_network")
 
-    def ex_get_private_network_by_name(self, name):
+    def ex_get_private_network(self, name):
         """
-        Get a specific Private Network by name
+        Get a specific Private Network by name.
 
-        :param name: Name of the Private Network you want (required)
+        :param name: The name of the Private Network.
         :type  name: ``str``
 
         :rtype: :class:`PnapBmcPrivateNetwork` or `None`
@@ -1036,7 +1066,7 @@ class PnapBmcNodeDriver(NodeDriver):
             "name": name,
             "location": location,
             "description": description,
-            "ipBlocks": ip_blocks,
+            "ipBlocks": self._ensure_list(ip_blocks),
         }
         return self._create_resource("public_network", data)
 
@@ -1048,11 +1078,11 @@ class PnapBmcNodeDriver(NodeDriver):
         """
         return self._list_resources("public_network")
 
-    def ex_get_public_network_by_name(self, name):
+    def ex_get_public_network(self, name):
         """
-        Get a specific Public Network by name
+        Get a specific Public Network by name.
 
-        :param name: Name of the Public Network you want (required)
+        :param name: The name of the Public Network
         :type  name: ``str``
 
         :rtype: :class:`PnapBmcPublicNetwork` or `None`
@@ -1090,25 +1120,41 @@ class PnapBmcNodeDriver(NodeDriver):
         }
         return self._edit_resource("public_network", public_network, data)
 
-    def ex_edit_public_network_add_ip_block(self, public_network, ip_block_id):
+    def ex_edit_public_network_add_ip_block(self, public_network, ip_block):
         """
         Adds an IP block to public network.
 
         :param: public_network: The Public Network you
-                                want to edit (required)
-        :type:  public_network: :class:`PnapBmcPublicNetwork`
+                                want to edit or Public Network Id (required)
+        :type:  public_network: :class:`PnapBmcPublicNetwork` or ``str``
 
-        :param: ip_block_id: The IP Block identifier.
-        :type:  ip_block_id: ``str``
+        :param: ip_block: The IP Block identifier you want to add or IP Block Id (required)
+        :type:  ip_block: :class:`PnapBmcIpBlock` ``str``
 
         :rtype: :class:`PnapBmcPublicNetwork`
         """
+        if isinstance(public_network, PnapBmcPublicNetwork):
+            public_network_id = public_network.id
+        elif isinstance(public_network, str):
+            public_network_id = public_network
+        else:
+            raise ValueError(
+                "public_network: PnapBmcPublicNetwork or string type are allowed"
+            )
+
+        if isinstance(ip_block, PnapBmcIpBlock):
+            ip_block_id = ip_block.id
+        elif isinstance(ip_block, str):
+            ip_block_id = ip_block
+        else:
+            raise ValueError("ip_block: PnapBmcIpBlock or string type are allowed")
+
         data = {
             "id": ip_block_id,
         }
         response = self._edit_resource_by_id(
             "public_network",
-            public_network.id,
+            public_network_id,
             "/ip-blocks",
             data=data,
             raw_response=True,
@@ -1116,9 +1162,12 @@ class PnapBmcNodeDriver(NodeDriver):
         )
 
         if response.status in VALID_RESPONSE_CODES:
-            return self.ex_get_public_network_by_name(public_network.name)
+            if isinstance(public_network, PnapBmcPublicNetwork):
+                return self.ex_get_public_network(public_network.name)
+            else:
+                return self._get_resource_by_id("public_network", public_network)
 
-    def ex_edit_public_network_remove_ip_block(self, public_network, ip_block_id):
+    def ex_edit_public_network_remove_ip_block(self, public_network, ip_block):
         """
         Removes the IP Block from the Public Network.
         The result of this is that any traffic addressed to any IP
@@ -1127,17 +1176,33 @@ class PnapBmcNodeDriver(NodeDriver):
         have any IPs assigned from the IP Block being removed.
 
         :param: public_network: The Public Network you
-                                want to edit (required)
-        :type:  public_network: :class:`PnapBmcPublicNetwork`
+                                want to edit or Public Network Id (required)
+        :type:  public_network: :class:`PnapBmcPublicNetwork` or ``str``
 
-        :param: ip_block_id: The IP Block identifier.
-        :type:  ip_block_id: ``str``
+        :param: ip_block: The IP Block identifier you want to add or IP Block Id (required)
+        :type:  ip_block: :class:`PnapBmcIpBlock` ``str``
 
         :rtype: :class:`PnapBmcPublicNetwork`
         """
+        if isinstance(public_network, PnapBmcPublicNetwork):
+            public_network_id = public_network.id
+        elif isinstance(public_network, str):
+            public_network_id = public_network
+        else:
+            raise ValueError(
+                "public_network: PnapBmcPublicNetwork or string type are allowed"
+            )
+
+        if isinstance(ip_block, PnapBmcIpBlock):
+            ip_block_id = ip_block.id
+        elif isinstance(ip_block, str):
+            ip_block_id = ip_block
+        else:
+            raise ValueError("ip_block: PnapBmcIpBlock or string type are allowed")
+
         response = self._edit_resource_by_id(
             "public_network",
-            public_network.id,
+            public_network_id,
             "/ip-blocks/",
             ip_block_id,
             method="DELETE",
@@ -1146,7 +1211,10 @@ class PnapBmcNodeDriver(NodeDriver):
         )
 
         if response.status in VALID_RESPONSE_CODES:
-            return self.ex_get_public_network_by_name(public_network.name)
+            if isinstance(public_network, PnapBmcPublicNetwork):
+                return self.ex_get_public_network(public_network.name)
+            else:
+                return self._get_resource_by_id("public_network", public_network)
 
     def ex_delete_public_network(self, public_network):
         """
@@ -1201,7 +1269,7 @@ class PnapBmcNodeDriver(NodeDriver):
         min_quantity=None,
     ):
         """
-        Retrieves all Products.
+        Retrieves the list of product availability details.
 
         :param: product_category: The product category.
         :type   product_category: ``list`` of ``str``
@@ -1526,11 +1594,11 @@ class PnapBmcNodeDriver(NodeDriver):
         """
         return self._list_resources("storage_network")
 
-    def ex_get_storage_network_by_name(self, name):
+    def ex_get_storage_network(self, name):
         """
-        Get a specific Storage Network by name
+        Get a specific Storage Network by name.
 
-        :param name: Name of the Storage Network you want (required)
+        :param name: The name of the Storage Network.
         :type  name: ``str``
 
         :rtype: :class:`PnapBmcStorageNetwork` or `None`
@@ -1741,52 +1809,55 @@ class PnapBmcNodeDriver(NodeDriver):
         )
         return res.status in VALID_RESPONSE_CODES
 
-    def _create_resource(self, resource_name, data):
-        has_own_class = getattr(self, "_to_" + resource_name, None)
+    def _create_resource(self, resource_type, data):
+        has_own_class = getattr(self, "_to_" + resource_type, None)
         data = json.dumps(self._remove_empty_elements(data))
         response = self.connection.request(
-            API_ENDPOINTS[resource_name.upper()], data=data, method="POST"
+            API_ENDPOINTS[resource_type.upper()], data=data, method="POST"
         ).object
         if has_own_class:
-            return getattr(self, "_to_" + resource_name)(response)
+            return getattr(self, "_to_" + resource_type)(response)
         else:
             return response
 
-    def _list_resources(self, resource_name):
-        has_own_class = getattr(self, "_to_" + resource_name, None)
-        response = self.connection.request(API_ENDPOINTS[resource_name.upper()]).object
+    def _list_resources(self, resource_type):
+        has_own_class = getattr(self, "_to_" + resource_type, None)
+        response = self.connection.request(API_ENDPOINTS[resource_type.upper()]).object
         if has_own_class:
-            return list(map(getattr(self, "_to_" + resource_name), response))
+            return list(map(getattr(self, "_to_" + resource_type), response))
         else:
             return response
 
-    def _get_resource(self, resource_name, identifier):
-        if resource_name == "node":
-            resource_key = "hostname"
-        elif resource_name == "ip_block":
-            resource_key = "id"
-        else:
-            resource_key = "name"
-        response = self.connection.request(API_ENDPOINTS[resource_name.upper()]).object
+    def _get_resource(self, resource_type, name, resource_key="name"):
+        response = self.connection.request(API_ENDPOINTS[resource_type.upper()]).object
         for item in response:
-            if item[resource_key] == identifier:
-                return getattr(self, "_to_" + resource_name)(item)
+            if item[resource_key] == name:
+                return getattr(self, "_to_" + resource_type)(item)
 
-    def _edit_resource(self, resource_name, resource, data, method="PATCH"):
-        if resource_name == "key_pair":
+    def _get_resource_by_id(self, resource_type, id):
+        try:
+            response = self.connection.request(
+                API_ENDPOINTS[resource_type.upper()] + id
+            ).object
+        except Exception:
+            return None
+        return getattr(self, "_to_" + resource_type)(response)
+
+    def _edit_resource(self, resource_type, resource, data, method="PATCH"):
+        if resource_type == "key_pair":
             resource_id = resource.extra["id"]
         else:
             resource_id = resource.id
 
         data = json.dumps(self._remove_empty_elements(data))
         response = self.connection.request(
-            API_ENDPOINTS[resource_name.upper()] + resource_id, data=data, method=method
+            API_ENDPOINTS[resource_type.upper()] + resource_id, data=data, method=method
         ).object
-        return getattr(self, "_to_" + resource_name)(response)
+        return getattr(self, "_to_" + resource_type)(response)
 
     def _edit_resource_by_id(
         self,
-        resource_name,
+        resource_type,
         resource_id,
         end_of_url,
         sub_resource_id="",
@@ -1795,10 +1866,10 @@ class PnapBmcNodeDriver(NodeDriver):
         raw_response=False,
         check_class=True,
     ):
-        has_own_class = getattr(self, "_to_" + resource_name, None)
+        has_own_class = getattr(self, "_to_" + resource_type, None)
         data = json.dumps(self._remove_empty_elements(data))
         response = self.connection.request(
-            API_ENDPOINTS[resource_name.upper()]
+            API_ENDPOINTS[resource_type.upper()]
             + resource_id
             + end_of_url
             + sub_resource_id,
@@ -1808,28 +1879,33 @@ class PnapBmcNodeDriver(NodeDriver):
         if not raw_response:
             response = response.object
         if has_own_class and check_class:
-            return getattr(self, "_to_" + resource_name)(response)
+            return getattr(self, "_to_" + resource_type)(response)
         else:
             return response
 
-    def _delete_resource(self, resource_name, resource):
-        if resource_name == "key_pair":
+    def _delete_resource(self, resource_type, resource):
+        if resource_type == "key_pair":
             resource_id = resource.extra["id"]
-        elif isinstance(resource, PNAP_BMC_TYPES.get(resource_name, bool)):
+        elif isinstance(resource, PNAP_BMC_TYPES.get(resource_type, bool)):
             resource_id = resource.id
         else:
             resource_id = resource
 
         res = self.connection.request(
-            API_ENDPOINTS[resource_name.upper()] + resource_id, method="DELETE"
+            API_ENDPOINTS[resource_type.upper()] + resource_id, method="DELETE"
         )
         return res.status in VALID_RESPONSE_CODES
 
-    def _retrieve(self, resource_name, params=None, method="GET"):
+    def _retrieve(self, resource_type, params=None, method="GET"):
         params = self._remove_empty_elements(params)
         return self.connection.request(
-            API_ENDPOINTS[resource_name.upper()], params, method
+            API_ENDPOINTS[resource_type.upper()], params, method
         ).object
+
+    def _ensure_list(self, parameter):
+        if not isinstance(parameter, list):
+            parameter = [parameter]
+        return parameter
 
     def _remove_empty_elements(self, d):
         """recursively remove empty elements from a dictionary"""

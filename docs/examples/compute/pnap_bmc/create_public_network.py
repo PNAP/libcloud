@@ -20,5 +20,5 @@ print(public_network)
     # print(public_network)
 
 # Delete the Public Network
-# public_network = driver.ex_get_public_network_by_name('my_public_network')
+# public_network = driver.ex_get_public_network('my_public_network')
 # driver.ex_delete_public_network(public_network)

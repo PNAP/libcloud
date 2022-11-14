@@ -40,7 +40,7 @@ class PnapBmcTest(unittest.TestCase, TestCaseMixin):
 
     def test_list_images_count(self):
         images = self.driver.list_images()
-        self.assertEqual(len(images), 8)
+        self.assertEqual(len(images), 9)
 
     def test_list_sizes_response(self):
         sizes = self.driver.list_sizes()
@@ -155,12 +155,12 @@ class PnapBmcTest(unittest.TestCase, TestCaseMixin):
         key = self.driver.get_key_pair("testkey1")
         self.assertTrue(self.driver.delete_key_pair(key))
 
-    def test_ex_get_node_by_name(self):
-        node = self.driver.ex_get_node_by_name("server-red")
+    def test_ex_get_node(self):
+        node = self.driver.ex_get_node("server-red")
         self.assertEqual("server-red", node.name)
 
     def test_ex_edit_node_tags(self):
-        existing_node = self.driver.ex_get_node_by_name("server-red")
+        existing_node = self.driver.ex_get_node("server-red")
         tags = [{"name": "test_name", "value": "test_value"}]
         node = self.driver.ex_edit_node_tags(existing_node, tags)
         self.assertEqual("server-red", node.name)
@@ -168,19 +168,19 @@ class PnapBmcTest(unittest.TestCase, TestCaseMixin):
         self.assertEqual("test_value", node.extra["tags"][0]["value"])
 
     def test_ex_edit_node_add_ip_block(self):
-        node = self.driver.ex_get_node_by_name("server-red")
+        node = self.driver.ex_get_node("server-red")
         ip_block = self.driver.ex_get_ip_block_by_id("6047127fed34ecc3ba8402d2")
         node = self.driver.ex_edit_node_add_ip_block(node, ip_block)
         self.assertEqual("12", node["id"])
 
     def test_ex_edit_node_remove_ip_block(self):
-        node = self.driver.ex_get_node_by_name("server-red")
+        node = self.driver.ex_get_node("server-red")
         ip_block = self.driver.ex_get_ip_block_by_id("6047127fed34ecc3ba8402d2")
         node = self.driver.ex_edit_node_remove_ip_block(node, ip_block)
         self.assertTrue(node)
 
     def test_ex_edit_node_add_private_network(self):
-        existing_node = self.driver.ex_get_node_by_name("server-red")
+        existing_node = self.driver.ex_get_node("server-red")
         private_network = {"id": "34"}
         node = self.driver.ex_edit_node_add_private_network(
             existing_node, private_network
@@ -188,15 +188,15 @@ class PnapBmcTest(unittest.TestCase, TestCaseMixin):
         self.assertEqual("34", node["id"])
 
     def test_ex_edit_node_remove_private_network(self):
-        existing_node = self.driver.ex_get_node_by_name("server-red")
-        private_network = self.driver.ex_get_private_network_by_name("test")
+        existing_node = self.driver.ex_get_node("server-red")
+        private_network = self.driver.ex_get_private_network("test")
         node = self.driver.ex_edit_node_remove_private_network(
             existing_node, private_network
         )
         self.assertTrue(node)
 
     def test_ex_edit_node_add_public_network(self):
-        existing_node = self.driver.ex_get_node_by_name("server-red")
+        existing_node = self.driver.ex_get_node("server-red")
         public_network = {"id": "56", "ips": ["182.16.0.146", "182.16.0.147"]}
         node = self.driver.ex_edit_node_add_public_network(
             existing_node, public_network
@@ -205,8 +205,8 @@ class PnapBmcTest(unittest.TestCase, TestCaseMixin):
         self.assertEqual(2, len(node["ips"]))
 
     def test_ex_edit_node_remove_public_network(self):
-        existing_node = self.driver.ex_get_node_by_name("server-red")
-        public_network = self.driver.ex_get_public_network_by_name("test")
+        existing_node = self.driver.ex_get_node("server-red")
+        public_network = self.driver.ex_get_public_network("test")
         node = self.driver.ex_edit_node_remove_public_network(
             existing_node, public_network
         )
@@ -221,27 +221,27 @@ class PnapBmcTest(unittest.TestCase, TestCaseMixin):
         self.assertEqual(1, len(tags))
         self.assertEqual("test", tags[0].name)
 
-    def test_ex_get_tag_by_name(self):
-        tag = self.driver.ex_get_tag_by_name("test")
+    def test_ex_get_tag(self):
+        tag = self.driver.ex_get_tag("test")
         self.assertEqual("test", tag.name)
 
     def test_ex_edit_tag_param_name(self):
-        tag = self.driver.ex_get_tag_by_name("test")
+        tag = self.driver.ex_get_tag("test")
         tag_edit = self.driver.ex_edit_tag(tag, name="edit")
         self.assertEqual("edit", tag_edit.description)
 
     def test_ex_edit_tag_param_is_billing_tag(self):
-        tag = self.driver.ex_get_tag_by_name("test")
+        tag = self.driver.ex_get_tag("test")
         tag_edit = self.driver.ex_edit_tag(tag, is_billing_tag=False)
         self.assertEqual(False, tag_edit.is_billing_tag)
 
     def test_ex_edit_tag_param_description(self):
-        tag = self.driver.ex_get_tag_by_name("test")
+        tag = self.driver.ex_get_tag("test")
         tag_edit = self.driver.ex_edit_tag(tag, description="edit")
         self.assertEqual("edit", tag_edit.description)
 
     def test_ex_delete_tag(self):
-        tag = self.driver.ex_get_tag_by_name("test")
+        tag = self.driver.ex_get_tag("test")
         self.assertTrue(self.driver.ex_delete_tag(tag))
 
     def test_ex_create_ip_block(self):
@@ -294,33 +294,33 @@ class PnapBmcTest(unittest.TestCase, TestCaseMixin):
         self.assertEqual(1, len(private_networks))
         self.assertEqual("test", private_networks[0].name)
 
-    def test_ex_get_private_network_by_name(self):
-        private_network = self.driver.ex_get_private_network_by_name("test")
+    def test_ex_get_private_network(self):
+        private_network = self.driver.ex_get_private_network("test")
         self.assertEqual("test", private_network.name)
 
     def test_ex_edit_private_network_param_name(self):
-        private_network = self.driver.ex_get_private_network_by_name("test")
+        private_network = self.driver.ex_get_private_network("test")
         private_network_edit = self.driver.ex_edit_private_network(
             private_network, "edit"
         )
         self.assertEqual("edit", private_network_edit.name)
 
     def test_ex_edit_private_network_param_description(self):
-        private_network = self.driver.ex_get_private_network_by_name("test")
+        private_network = self.driver.ex_get_private_network("test")
         private_network_edit = self.driver.ex_edit_private_network(
             private_network, description="edit"
         )
         self.assertEqual("edit", private_network_edit.description)
 
     def test_ex_edit_private_network_param_location_default(self):
-        private_network = self.driver.ex_get_private_network_by_name("test")
+        private_network = self.driver.ex_get_private_network("test")
         private_network_edit = self.driver.ex_edit_private_network(
             private_network, location_default=True
         )
         self.assertEqual(True, private_network_edit.location_default)
 
     def test_ex_delete_private_network(self):
-        private_network = self.driver.ex_get_private_network_by_name("test")
+        private_network = self.driver.ex_get_private_network("test")
         self.assertTrue(self.driver.ex_delete_private_network(private_network))
 
     def test_ex_create_public_network(self):
@@ -336,26 +336,26 @@ class PnapBmcTest(unittest.TestCase, TestCaseMixin):
         self.assertEqual(1, len(public_networks))
         self.assertEqual("test", public_networks[0].name)
 
-    def test_ex_get_public_network_by_name(self):
-        public_network = self.driver.ex_get_public_network_by_name("test")
+    def test_ex_get_public_network(self):
+        public_network = self.driver.ex_get_public_network("test")
         self.assertEqual("test", public_network.name)
 
     def test_ex_edit_public_network_param_name(self):
-        public_network = self.driver.ex_get_public_network_by_name("test")
+        public_network = self.driver.ex_get_public_network("test")
         public_network_edit = self.driver.ex_edit_public_network(
             public_network, name="edit"
         )
         self.assertEqual("edit", public_network_edit.name)
 
     def test_ex_edit_public_network_param_description(self):
-        public_network = self.driver.ex_get_public_network_by_name("test")
+        public_network = self.driver.ex_get_public_network("test")
         public_network_edit = self.driver.ex_edit_public_network(
             public_network, description="edit"
         )
         self.assertEqual("edit", public_network_edit.description)
 
     def test_edit_public_network_add_ip_block(self):
-        public_network = self.driver.ex_get_public_network_by_name("test")
+        public_network = self.driver.ex_get_public_network("test")
         public_network_edit = self.driver.ex_edit_public_network_add_ip_block(
             public_network, "123"
         )
@@ -364,14 +364,14 @@ class PnapBmcTest(unittest.TestCase, TestCaseMixin):
         )
 
     def test_ex_edit_public_network_remove_ip_block(self):
-        public_network = self.driver.ex_get_public_network_by_name("test")
+        public_network = self.driver.ex_get_public_network("test")
         public_network_edit = self.driver.ex_edit_public_network_remove_ip_block(
             public_network, "123"
         )
         self.assertEqual(1, len(public_network_edit.ip_blocks))
 
     def test_ex_delete_public_network(self):
-        public_network = self.driver.ex_get_public_network_by_name("test")
+        public_network = self.driver.ex_get_public_network("test")
         self.assertTrue(self.driver.ex_delete_public_network(public_network))
 
     def test_ex_get_products(self):
@@ -452,26 +452,26 @@ class PnapBmcTest(unittest.TestCase, TestCaseMixin):
         self.assertEqual(1, len(storage_networks))
         self.assertEqual("test", storage_networks[0].name)
 
-    def test_ex_get_storage_network_by_name(self):
-        storage_network = self.driver.ex_get_storage_network_by_name("test")
+    def test_ex_get_storage_network(self):
+        storage_network = self.driver.ex_get_storage_network("test")
         self.assertEqual("test", storage_network.name)
 
     def test_ex_edit_storage_network_param_name(self):
-        storage_network = self.driver.ex_get_storage_network_by_name("test")
+        storage_network = self.driver.ex_get_storage_network("test")
         storage_network_edit = self.driver.ex_edit_storage_network(
             storage_network, name="test edit"
         )
         self.assertEqual("test edit", storage_network_edit.name)
 
     def test_ex_edit_storage_network_param_description(self):
-        storage_network = self.driver.ex_get_storage_network_by_name("test")
+        storage_network = self.driver.ex_get_storage_network("test")
         storage_network_edit = self.driver.ex_edit_storage_network(
             storage_network, description="desc edit"
         )
         self.assertEqual("desc edit", storage_network_edit.description)
 
     def test_ex_delete_storage_network(self):
-        storage_network = self.driver.ex_get_storage_network_by_name("test")
+        storage_network = self.driver.ex_get_storage_network("test")
         self.assertTrue(self.driver.ex_delete_storage_network(storage_network))
 
     def test_ex_get_volumes_by_storage_network_id(self):
@@ -540,7 +540,7 @@ class PnapBmcMockHttp(MockHttp):
         body = self.fixtures.load("ex_edit_node_add_ip_block.json")
         return (httplib.ACCEPTED, body, {}, httplib.responses[httplib.ACCEPTED])
 
-    def _bmc_v1_servers_123_network_configuration_ip_block_configurations_ip_blocks_6047127fed34ecc3ba8402d2(
+    def _bmc_v1_servers_123_network_configuration_ip_block_configurations_ip_blocks_12(
         self, method, url, body, headers
     ):
         body = self.fixtures.load("ex_edit_node_remove_ip_block.json")

@@ -20,7 +20,9 @@ from libcloud.utils.py3 import httplib
 from libcloud.common.base import JsonResponse, ConnectionUserAndKey, LibcloudError
 from libcloud.compute.types import NodeState, InvalidCredsError
 
-AUTH_API = "https://auth.phoenixnap.com/auth/realms/BMC/protocol/openid-connect/token"  # noqa
+AUTH_API = (
+    "https://auth.phoenixnap.com/auth/realms/BMC/protocol/openid-connect/token"  # noqa
+)
 
 API_ENDPOINTS = {
     "NODE": "/bmc/v1/servers/",
@@ -111,6 +113,7 @@ class PnapBmcConnection(ConnectionUserAndKey):
             self._get_auth_token()
         headers.update({"Content-Type": "application/json"})
         headers.update({"Authorization": "Bearer %s" % self.token})
+        headers.update({"X-Powered-By": "BMC-Libcloud"})
         return headers
 
     def _get_auth_token(self):
