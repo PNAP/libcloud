@@ -930,7 +930,13 @@ class PnapBmcNodeDriver(NodeDriver):
         return self._delete_resource("ip_block", id)
 
     def ex_create_private_network(
-        self, name, location, cidr, location_default=False, description=None
+        self,
+        name,
+        location,
+        cidr,
+        location_default=False,
+        description=None,
+        vlan_id=None,
     ):
         """
         Create a Private Network.
@@ -953,6 +959,9 @@ class PnapBmcNodeDriver(NodeDriver):
         :param: description: The description of private network.
         :type:  description: ``str``
 
+        :param: vlan_id: The VLAN that will be assigned to this network.
+        :type:  vlan_id: ``int``
+
         :rtype: :class:`PnapBmcPrivateNetwork`
         """
         data = {
@@ -961,6 +970,7 @@ class PnapBmcNodeDriver(NodeDriver):
             "locationDefault": location_default,
             "description": description,
             "cidr": cidr,
+            "vlanId": vlan_id,
         }
         return self._create_resource("private_network", data)
 
@@ -1032,7 +1042,12 @@ class PnapBmcNodeDriver(NodeDriver):
         return self._delete_resource("private_network", private_network)
 
     def ex_create_public_network(
-        self, name, location, description=None, ip_blocks=None
+        self,
+        name,
+        location,
+        description=None,
+        ip_blocks=None,
+        vlan_id=None,
     ):
         """
         Create a Public Network.
@@ -1051,6 +1066,9 @@ class PnapBmcNodeDriver(NodeDriver):
         :type:  ip_blocks: ``list`` of :class:``PnapBmcIpBlock`` or
                            ``list`` of ``dict`` : [{'id': '123'}, {'id': '456'}]
 
+        :param: vlan_id: The VLAN that will be assigned to this network.
+        :type:  vlan_id: ``int``
+
         :rtype: :class:`PnapBmcPublicNetwork`
         """
         if ip_blocks is not None:
@@ -1067,6 +1085,7 @@ class PnapBmcNodeDriver(NodeDriver):
             "location": location,
             "description": description,
             "ipBlocks": self._ensure_list(ip_blocks),
+            "vlanId": vlan_id,
         }
         return self._create_resource("public_network", data)
 
