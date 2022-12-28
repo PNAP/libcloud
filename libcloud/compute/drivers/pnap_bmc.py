@@ -80,6 +80,7 @@ class PnapBmcNodeDriver(NodeDriver):
         return [
             NodeImage("ubuntu/bionic", "ubuntu/bionic", self),
             NodeImage("ubuntu/focal", "ubuntu/focal", self),
+            NodeImage("ubuntu/jammy", "ubuntu/jammy", self),
             NodeImage("centos/centos7", "centos/centos7", self),
             NodeImage("centos/centos8", "centos/centos8", self),
             NodeImage("windows/srv2019std", "windows/srv2019std", self),

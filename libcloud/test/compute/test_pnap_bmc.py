@@ -40,7 +40,7 @@ class PnapBmcTest(unittest.TestCase, TestCaseMixin):
 
     def test_list_images_count(self):
         images = self.driver.list_images()
-        self.assertEqual(len(images), 9)
+        self.assertEqual(len(images), 10)
 
     def test_list_sizes_response(self):
         sizes = self.driver.list_sizes()
