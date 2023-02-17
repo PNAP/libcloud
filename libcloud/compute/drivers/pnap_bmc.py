@@ -179,7 +179,7 @@ class PnapBmcNodeDriver(NodeDriver):
         """
         return self._node_action(node, "shutdown")
 
-    def destroy_node(self, node, ex_delete_ip_blocks=True):
+    def destroy_node(self, node, ex_delete_ip_blocks=False):
         """
         Delete a specific node.
         This is an irreversible action, and once performed,
@@ -221,9 +221,22 @@ class PnapBmcNodeDriver(NodeDriver):
         ex_rdp_allowed_ips=None,
         ex_install_os_to_ram=False,
         ex_cloud_init_user_data=None,
+        ex_force=False,
     ):
         """
         Create a node.
+
+        :param  name: The name of the node to create.
+        :type   name: ``str``
+
+        :param  size: Server type
+        :type   size: :class:``NodeSize``
+
+        :param  image: The server's OS
+        :type   image: :class:``NodeImage``
+
+        :param  location: Server Location.
+        :type   location: :class:``NodeLocation``
 
         :keyword ex_ip_blocks_configuration_type: Determines the approach for
                                                  configuring IP blocks for
@@ -320,6 +333,10 @@ class PnapBmcNodeDriver(NodeDriver):
                                           encoding. NoCloud format is supported.
         :type    ex_cloud_init_user_data: ``str``
 
+        :keyword ex_force: Control advanced features availability.
+                           It is advised to use with caution since it might lead to unhealthy setups.
+        :type    ex_force: ``bool``
+
         :return: The newly created node.
         :rtype: :class:`Node`
         """
@@ -360,7 +377,7 @@ class PnapBmcNodeDriver(NodeDriver):
             },
             "tags": self._ensure_list(ex_tags),
         }
-        return self._create_resource("node", data)
+        return self._create_resource("node", data, params={"force": ex_force})
 
     def list_key_pairs(self):
         """
@@ -601,7 +618,7 @@ class PnapBmcNodeDriver(NodeDriver):
         )
         return response.status in VALID_RESPONSE_CODES
 
-    def ex_edit_node_add_private_network(self, node, private_network):
+    def ex_edit_node_add_private_network(self, node, private_network, force=False):
         """
         Adds the server to a private network.
 
@@ -624,12 +641,17 @@ class PnapBmcNodeDriver(NodeDriver):
                                  }
         :type:  private_network: ``dict``
 
+        :keyword force: Control advanced features availability.
+                        It is advised to use with caution since it might lead to unhealthy setups.
+        :type    force: ``bool``
+
         :rtype: ``dict``
         """
         return self._edit_resource_by_id(
             "node",
             node.id,
             data=private_network,
+            params={"force": force},
             check_class=False,
             end_of_url="/network-configuration/private-network-configuration/private-networks",
         )
@@ -1821,6 +1843,8 @@ class PnapBmcNodeDriver(NodeDriver):
         )
 
     def _node_action(self, node, action, data=None):
+        if node is None:
+            raise Exception("The resource is not found.")
         data = json.dumps(self._remove_empty_elements(data))
         res = self.connection.request(
             API_ENDPOINTS["NODE"] + node.id + "/actions/%s" % (action),
@@ -1829,11 +1853,15 @@ class PnapBmcNodeDriver(NodeDriver):
         )
         return res.status in VALID_RESPONSE_CODES
 
-    def _create_resource(self, resource_type, data):
+    def _create_resource(self, resource_type, data, params=None):
         has_own_class = getattr(self, "_to_" + resource_type, None)
         data = json.dumps(self._remove_empty_elements(data))
+
         response = self.connection.request(
-            API_ENDPOINTS[resource_type.upper()], data=data, method="POST"
+            API_ENDPOINTS[resource_type.upper()],
+            data=data,
+            method="POST",
+            params=params,
         ).object
         if has_own_class:
             return getattr(self, "_to_" + resource_type)(response)
@@ -1882,6 +1910,7 @@ class PnapBmcNodeDriver(NodeDriver):
         end_of_url,
         sub_resource_id="",
         data=None,
+        params=None,
         method="POST",
         raw_response=False,
         check_class=True,
@@ -1894,6 +1923,7 @@ class PnapBmcNodeDriver(NodeDriver):
             + end_of_url
             + sub_resource_id,
             data=data,
+            params=params,
             method=method,
         )
         if not raw_response:
@@ -1943,5 +1973,5 @@ class PnapBmcNodeDriver(NodeDriver):
             return {
                 k: v
                 for k, v in ((k, self._remove_empty_elements(v)) for k, v in d.items())
-                if not empty(v)
+                if not empty(v) or k == "ips"
             }
