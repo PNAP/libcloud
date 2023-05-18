@@ -85,9 +85,13 @@ class PnapBmcNodeDriver(NodeDriver):
             NodeImage("centos/centos8", "centos/centos8", self),
             NodeImage("windows/srv2019std", "windows/srv2019std", self),
             NodeImage("windows/srv2019dc", "windows/srv2019dc", self),
-            NodeImage("esxi/esxi70u2", "esxi/esxi70u2", self),
+            NodeImage("esxi/esxi70", "esxi/esxi70", self),
+            NodeImage("esxi/esxi80", "esxi/esxi80", self),
             NodeImage("debian/bullseye", "debian/bullseye", self),
             NodeImage("proxmox/bullseye", "proxmox/bullseye", self),
+            NodeImage("netris/controller", "netris/controller", self),
+            NodeImage("netris/softgate_1g", "netris/softgate_1g", self),
+            NodeImage("netris/softgate_10g", "netris/softgate_10g", self),
         ]
 
     def list_sizes(self, location=None):
@@ -222,6 +226,8 @@ class PnapBmcNodeDriver(NodeDriver):
         ex_install_os_to_ram=False,
         ex_cloud_init_user_data=None,
         ex_force=False,
+        ex_netris_controller=None,
+        ex_netris_softgate=None,
     ):
         """
         Create a node.
@@ -257,6 +263,9 @@ class PnapBmcNodeDriver(NodeDriver):
 
         :keyword ex_gateway_address: The address of the gateway assigned
                                      / to assign to the server.
+                                     When used as part of request body, IP address has to be part of a private/public network or an IP block assigned to this server.
+                                     Gateway address also has to be assigned on an already deployed resource unless the address matches
+                                     the BMC gateway address in a public network/IP block or the force query parameter is true.
         :type    ex_gateway_address: ``str``
 
         :keyword ex_private_network_configuration_type: Determines the
@@ -337,6 +346,17 @@ class PnapBmcNodeDriver(NodeDriver):
                            It is advised to use with caution since it might lead to unhealthy setups.
         :type    ex_force: ``bool``
 
+        :keyword ex_netris_controller: Netris Controller configuration properties.
+        :type    ex_netris_controller: ``dict``
+
+        :keyword ex_netris_softgate: Netris Softgate configuration properties.
+                                     {
+                                        'controllerAddress': '120.153.203.227',
+                                        'controllerVersion': '3.4.0-003',
+                                        'controllerAuthKey': 'w0OP8TjZaHO17DTwxtN5VYh5Bh1ZVH2s3WK1JRTw',
+                                     }
+        :type    ex_netris_softgate: ``dict``
+
         :return: The newly created node.
         :rtype: :class:`Node`
         """
@@ -374,6 +394,8 @@ class PnapBmcNodeDriver(NodeDriver):
                 "windows": {"rdpAllowedIps": self._ensure_list(ex_rdp_allowed_ips)},
                 "installOsToRam": ex_install_os_to_ram,
                 "cloudInit": {"userData": ex_cloud_init_user_data},
+                "netrisController": ex_netris_controller,
+                "netrisSoftgate": ex_netris_softgate,
             },
             "tags": self._ensure_list(ex_tags),
         }
@@ -956,10 +978,11 @@ class PnapBmcNodeDriver(NodeDriver):
         self,
         name,
         location,
-        cidr,
+        cidr=None,
         location_default=False,
         description=None,
         vlan_id=None,
+        force=False,
     ):
         """
         Create a Private Network.
@@ -985,8 +1008,13 @@ class PnapBmcNodeDriver(NodeDriver):
         :param: vlan_id: The VLAN that will be assigned to this network.
         :type:  vlan_id: ``int``
 
+        :param: force: parameter controlling advanced features availability.
+                       It is advised to use with caution since it might lead to unhealthy setups.
+        :type:  force: ``bool``
+
         :rtype: :class:`PnapBmcPrivateNetwork`
         """
+        params = {"force": force}
         data = {
             "name": name,
             "location": location,
@@ -995,7 +1023,7 @@ class PnapBmcNodeDriver(NodeDriver):
             "cidr": cidr,
             "vlanId": vlan_id,
         }
-        return self._create_resource("private_network", data)
+        return self._create_resource("private_network", data, params=params)
 
     def ex_list_private_networks(self):
         """
@@ -1594,7 +1622,9 @@ class PnapBmcNodeDriver(NodeDriver):
         """
         return self._delete_resource("cluster", cluster_id)
 
-    def ex_create_storage_network(self, name, location, volumes, description=None):
+    def ex_create_storage_network(
+        self, name, location, volumes, description=None, client_vlan=None
+    ):
         """
         Create a storage network and volume.
 
@@ -1604,7 +1634,7 @@ class PnapBmcNodeDriver(NodeDriver):
         :param: location: Location of storage network. (required)
         :type:  location: ``str``
 
-        :param: voulmes: Volume to be created alongside storage. (required)
+        :param: volumes: Volume to be created alongside storage. (required)
         :type:  volumes: ``list`` of ``dict`` :
                          [{
                             "name": "My volume name",
@@ -1616,6 +1646,9 @@ class PnapBmcNodeDriver(NodeDriver):
         :param: description: Storage network description.
         :type:  description: ``str``
 
+        :param: client_vlan: Custom Client VLAN that the Storage Network will be set to.
+        :type:  client_vlan: ``int``
+
         :rtype: :class:`PnapBmcStorageNetwork`
         """
         if isinstance(volumes, dict):
@@ -1625,6 +1658,7 @@ class PnapBmcNodeDriver(NodeDriver):
             "location": location,
             "volumes": volumes,
             "description": description,
+            "clientVlan": client_vlan,
         }
         return self._create_resource("storage_network", data)
 
@@ -1704,6 +1738,41 @@ class PnapBmcNodeDriver(NodeDriver):
             check_class=False,
         )
 
+    def ex_create_volume_in_storage_network(self, storage_network_id, volumes):
+        """
+        Create a volume belonging to a storage network.
+
+        :param: storage_network_id: ID of storage network.
+        :type   storage_network_id: ``str``
+
+        :param: volume: Volume to be created. (required)
+        :type:  volume: ``dict`` :
+                         {
+                            "name": "My volume name" (required),
+                            "description": "My volume description",
+                            "pathSuffix": "/shared-docs",
+                            "capacityInGb": 1000 (required),
+                            "permissions":
+                                "nfs": {
+                                    "readWrite": ["100.80.0.5","100.80.0.6"],
+                                    "readOnly": ["100.80.0.5"],
+                                    "rootSquash": ["100.80.0.5","100.80.0.4/24"],
+                                    "noSquash": ["100.80.0.7","100.80.0.*"],
+                                    "allSquash": ["100.80.0.5","100.80.0.6"],
+                                }
+                         }
+
+
+        :rtype: ``list`` of ``dict``
+        """
+        return self._create_resource(
+            "storage_network",
+            volumes,
+            resource_id=storage_network_id,
+            end_of_url="/volumes",
+            check_class=False,
+        )
+
     def ex_get_volume_by_id(self, volume_id):
         """
         Get a storage network's volume details.
@@ -1719,6 +1788,95 @@ class PnapBmcNodeDriver(NodeDriver):
                 volume for volume in storage.volumes if volume["id"] == volume_id
             )
         return None
+
+    def ex_edit_volume_in_storage_network(
+        self,
+        storage_network_id,
+        volume_id,
+        capacity_in_gb=None,
+        description=None,
+        new_name=None,
+        path_suffix=None,
+        permissions=None,
+    ):
+        """
+        Update a storage network's volume details.
+
+        :param: storage_network_id: ID of storage network. (required)
+        :type   storage_network_id: ``str``
+
+        :param: volume_id: ID of volume. (required)
+        :type   volume_id: ``str``
+
+        :param: capacity_in_gb: Capacity of Volume in GB.
+        :type   capacity_in_gb: ``int``
+
+        :param: description: Volume description.
+        :type   description: ``str``
+
+        :param: new_name: New Volume name.
+        :type   new_name: ``str``
+
+        :param: path_suffix: Last part of volume's path.
+        :type   path_suffix: ``str``
+
+        :param: permissions: Last part of volume's path.
+        :type   permissions: ``dict``
+                             {
+                                "nfs": {
+                                        "readWrite": ["100.80.0.5","100.80.0.6"],
+                                        "readOnly": ["100.80.0.5"],
+                                        "rootSquash": ["100.80.0.5","100.80.0.4/24"],
+                                        "noSquash": ["100.80.0.7","100.80.0.*"],
+                                        "allSquash": ["100.80.0.5","100.80.0.6"],
+                                    }
+                             }
+
+        :rtype: ``dict`` or None
+        """
+        data = json.dumps(
+            self._remove_empty_elements(
+                {
+                    "capacityInGb": capacity_in_gb,
+                    "description": description,
+                    "name": new_name,
+                    "pathSuffix": path_suffix,
+                    "permissions": permissions,
+                }
+            )
+        )
+
+        response = self.connection.request(
+            API_ENDPOINTS["STORAGE_NETWORK"]
+            + storage_network_id
+            + "/volumes/"
+            + volume_id,
+            data=data,
+            method="PATCH",
+        ).object
+        return response
+
+    def ex_delete_volume_in_storage_network(self, storage_network_id, volume_id):
+        """
+        Delete a Storage Network's Volume
+
+        :param: storage_network_id: ID of storage network. (required)
+        :type   storage_network_id: ``str``
+
+        :param: volume_id: ID of volume. (required)
+        :type   volume_id: ``str``
+
+        :return: True on success
+        :rtype: ``bool``
+        """
+        res = self.connection.request(
+            API_ENDPOINTS["STORAGE_NETWORK"]
+            + storage_network_id
+            + "/volumes/"
+            + volume_id,
+            method="DELETE",
+        )
+        return res.status in VALID_RESPONSE_CODES
 
     def _to_key_pair(self, data):
         extra = {
@@ -1853,17 +2011,25 @@ class PnapBmcNodeDriver(NodeDriver):
         )
         return res.status in VALID_RESPONSE_CODES
 
-    def _create_resource(self, resource_type, data, params=None):
+    def _create_resource(
+        self,
+        resource_type,
+        data,
+        params=None,
+        resource_id="",
+        end_of_url="",
+        check_class=True,
+    ):
         has_own_class = getattr(self, "_to_" + resource_type, None)
         data = json.dumps(self._remove_empty_elements(data))
 
         response = self.connection.request(
-            API_ENDPOINTS[resource_type.upper()],
+            API_ENDPOINTS[resource_type.upper()] + resource_id + end_of_url,
             data=data,
             method="POST",
             params=params,
         ).object
-        if has_own_class:
+        if has_own_class and check_class:
             return getattr(self, "_to_" + resource_type)(response)
         else:
             return response
