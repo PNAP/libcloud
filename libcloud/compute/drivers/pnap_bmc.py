@@ -228,6 +228,7 @@ class PnapBmcNodeDriver(NodeDriver):
         ex_force=False,
         ex_netris_controller=None,
         ex_netris_softgate=None,
+        ex_storage_configuration=None,
     ):
         """
         Create a node.
@@ -357,6 +358,15 @@ class PnapBmcNodeDriver(NodeDriver):
                                      }
         :type    ex_netris_softgate: ``dict``
 
+        :keyword ex_storage_configuration: Storage configuration.
+                                           {
+                                                'rootPartition': {
+                                                    'raid': 'NO_RAID',
+                                                    'size': -1
+                                                }
+                                           }
+        :type    ex_storage_configuration: ``dict``
+
         :return: The newly created node.
         :rtype: :class:`Node`
         """
@@ -398,6 +408,7 @@ class PnapBmcNodeDriver(NodeDriver):
                 "netrisSoftgate": ex_netris_softgate,
             },
             "tags": self._ensure_list(ex_tags),
+            "storageConfiguration": ex_storage_configuration,
         }
         return self._create_resource("node", data, params={"force": ex_force})
 
@@ -715,7 +726,7 @@ class PnapBmcNodeDriver(NodeDriver):
         )
         return response.status in VALID_RESPONSE_CODES
 
-    def ex_edit_node_add_public_network(self, node, public_network):
+    def ex_edit_node_add_public_network(self, node, public_network, force=False):
         """
         Adds the server to a Public Network.
         No actual configuration is performed on the operating system.
@@ -741,12 +752,18 @@ class PnapBmcNodeDriver(NodeDriver):
                                  }
         :type:  public_network: ``dict``
 
+        :param: force: Query parameter controlling advanced features availability.
+        :type:  force: ``bool``
+
         :rtype: ``dict``
         """
+        params = {"force": force}
+
         return self._edit_resource_by_id(
             "node",
             node.id,
             data=public_network,
+            params=params,
             check_class=False,
             end_of_url="/network-configuration/public-network-configuration/public-networks",
         )
@@ -1237,7 +1254,9 @@ class PnapBmcNodeDriver(NodeDriver):
             else:
                 return self._get_resource_by_id("public_network", public_network)
 
-    def ex_edit_public_network_remove_ip_block(self, public_network, ip_block):
+    def ex_edit_public_network_remove_ip_block(
+        self, public_network, ip_block, force=False
+    ):
         """
         Removes the IP Block from the Public Network.
         The result of this is that any traffic addressed to any IP
@@ -1254,6 +1273,8 @@ class PnapBmcNodeDriver(NodeDriver):
 
         :rtype: :class:`PnapBmcPublicNetwork`
         """
+        params = {"force": force}
+
         if isinstance(public_network, PnapBmcPublicNetwork):
             public_network_id = public_network.id
         elif isinstance(public_network, str):
@@ -1275,6 +1296,7 @@ class PnapBmcNodeDriver(NodeDriver):
             public_network_id,
             "/ip-blocks/",
             ip_block_id,
+            params=params,
             method="DELETE",
             raw_response=True,
             check_class=False,
@@ -1640,7 +1662,13 @@ class PnapBmcNodeDriver(NodeDriver):
                             "name": "My volume name",
                             "description": "My volume description",
                             "pathSuffix": "/shared-docs",
-                            "capacityInGb": 1000
+                            "capacityInGb": 1000,
+                            "tags": [
+                                {
+                                    "name": "stage",
+                                    "value": "beta"
+                                }
+                            ]
                          }]
 
         :param: description: Storage network description.
@@ -1759,6 +1787,12 @@ class PnapBmcNodeDriver(NodeDriver):
                                     "rootSquash": ["100.80.0.5","100.80.0.4/24"],
                                     "noSquash": ["100.80.0.7","100.80.0.*"],
                                     "allSquash": ["100.80.0.5","100.80.0.6"],
+                                    "tags": [
+                                        {
+                                            "name": "stage",
+                                            "value": "beta"
+                                        }
+                                    ]
                                 }
                          }
 
@@ -1853,6 +1887,37 @@ class PnapBmcNodeDriver(NodeDriver):
             + volume_id,
             data=data,
             method="PATCH",
+        ).object
+        return response
+
+    def ex_edit_volume_tags_in_storage_network(
+        self, storage_network_id, volume_id, tags
+    ):
+        """
+        Overwrites tags assigned for the volume.
+
+        :param: storage_network_id: ID of storage network. (required)
+        :type   storage_network_id: ``str``
+
+        :param: volume_id: ID of volume. (required)
+        :type   volume_id: ``str``
+
+        :param: tags: ID of volume. (required)
+        :type   tags: ``dict``
+
+        :return: True on success
+        :rtype: ``dict`` or None
+        """
+        data = json.dumps(self._ensure_list(self._remove_empty_elements(tags)))
+
+        response = self.connection.request(
+            API_ENDPOINTS["STORAGE_NETWORK"]
+            + storage_network_id
+            + "/volumes/"
+            + volume_id
+            + "/tags",
+            data=data,
+            method="PUT",
         ).object
         return response
 
@@ -2022,7 +2087,6 @@ class PnapBmcNodeDriver(NodeDriver):
     ):
         has_own_class = getattr(self, "_to_" + resource_type, None)
         data = json.dumps(self._remove_empty_elements(data))
-
         response = self.connection.request(
             API_ENDPOINTS[resource_type.upper()] + resource_id + end_of_url,
             data=data,
@@ -2100,6 +2164,8 @@ class PnapBmcNodeDriver(NodeDriver):
             return response
 
     def _delete_resource(self, resource_type, resource):
+        if resource is None:
+            return False
         if resource_type == "key_pair":
             resource_id = resource.extra["id"]
         elif isinstance(resource, PNAP_BMC_TYPES.get(resource_type, bool)):
