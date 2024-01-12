@@ -805,6 +805,229 @@ class PnapBmcNodeDriver(NodeDriver):
         )
         return response.status in VALID_RESPONSE_CODES
 
+    def ex_reserve_node(self, node, pricing_model):
+        """
+        Reserve specific server.
+
+        :param: node: Node which should be used
+        :type:  node: :class:``Node``
+
+        :param: pricing_model: Server pricing model.
+        :type:  pricing_model: ``str``
+
+        :rtype: ``dict``
+        """
+
+        data = {"pricingModel": pricing_model}
+        return self._create_resource(
+            "node", data, resource_id=node.id, end_of_url="/actions/reserve"
+        )
+
+    def ex_provision_reserved_node(
+        self,
+        node,
+        image,
+        name=None,
+        ex_ip_blocks_configuration_type=None,
+        ex_ip_blocks_ids=None,
+        ex_management_access_allowed_ips=None,
+        ex_gateway_address=None,
+        ex_private_network_configuration_type=None,
+        ex_private_networks=None,
+        ex_public_networks=None,
+        ex_tags=None,
+        ex_description=None,
+        ex_ssh_keys=None,
+        ex_install_default_ssh_keys=True,
+        ex_ssh_key_ids=None,
+        ex_network_type=None,
+        ex_rdp_allowed_ips=None,
+        ex_install_os_to_ram=False,
+        ex_cloud_init_user_data=None,
+        ex_force=False,
+        ex_netris_controller=None,
+        ex_netris_softgate=None,
+        ex_storage_configuration=None,
+    ):
+        """
+        Provision reserved node.
+
+        :param  name: The name of the node to create.
+        :type   name: ``str``
+
+        :param  image: The server's OS
+        :type   image: :class:``NodeImage``
+
+        :keyword ex_ip_blocks_configuration_type: Determines the approach for
+                                                 configuring IP blocks for
+                                                 the server being provisioned.
+        :type    ip_blocks_configuration_type: ``str``
+
+        :keyword ex_ip_blocks_ids: Used to specify the previously purchase
+                                  IP blocks to assign to this server upon
+                                  provisioning.
+        :type    ex_ip_blocks_ids: ``list`` of ``dict``
+                                  ip_blocks elements: id (``str``)
+
+        :keyword ex_management_access_allowed_ips: List of IPs allowed to
+                                                   access the Management UI.
+                                                   Supported in single IP,
+                                                   CIDR and range format.
+        :type    ex_management_access_allowed_ips: ``list`` of ``str``
+
+        :keyword ex_gateway_address: The address of the gateway assigned
+                                     / to assign to the server.
+                                     When used as part of request body, IP address has to be part of a private/public network or an IP block assigned to this server.
+                                     Gateway address also has to be assigned on an already deployed resource unless the address matches
+                                     the BMC gateway address in a public network/IP block or the force query parameter is true.
+        :type    ex_gateway_address: ``str``
+
+        :keyword ex_private_network_configuration_type: Determines the
+                                                        approach for
+                                                        configuring
+                                                        private network(s)
+                                                        for the server being
+                                                        provisioned.
+        :type    ex_private_network_configuration_type: ``str``
+
+        :keyword ex_private_networks: The list of private networks
+                                      this server is member of.
+                                      Private networks elements:
+                                        id (``str``),
+                                        ips, (``list`` of ``str``)
+                                        dhcp (``bool``)
+        :type    ex_private_networks: ``list`` of ``dict``
+
+        :keyword ex_public_networks: The list of public networks
+                                     this server is member of.
+                                     Public networks elements:
+                                       id (``str``),
+                                       ips (``list`` of ``str``)
+        :type    ex_public_networks: ``list`` of ``dict``
+
+        :keyword ex_tags: Tags to set to server, if any.
+                          Tag elements:
+                            name (``str``),
+                            value (``str``)
+        :type    ex_tags: ``list`` of ``dict``
+
+        :keyword ex_description: Description of server.
+        :type    ex_description: ``str``
+
+        :keyword ex_install_default_ssh_keys: Whether or not to install
+                                              ssh keys marked as default
+                                              in addition to any ssh keys
+                                              specified in this request.
+        :type    ex_install_default_ssh_keys: ``bool``
+
+        :keyword ex_ssh_keys: A list of SSH Keys that will be
+                              installed on the server.
+        :type    ex_ssh_keys: ``list`` of ``str``
+
+        :keyword ex_ssh_key_ids: A list of SSH Key IDs that will be installed
+                                 on the server in addition to any ssh keys
+                                 specified in this request.
+        :type    ex_ssh_key_ids: ``list`` of ``str``
+
+        :keyword ex_network_type: The type of network configuration
+                                  for this server.
+        :type    ex_network_type: ``str``
+
+        :keyword ex_rdp_allowed_ips: List of IPs allowed for RDP access to
+                                     Windows OS. Supported in single IP, CIDR
+                                     and range format. When undefined, RDP is
+                                     disabled. To allow RDP access from any IP
+                                     use 0.0.0.0/0
+        :type    ex_rdp_allowed_ips: ``list`` of ``str``
+
+        :keyword ex_install_os_to_ram: If true, OS will be installed to
+                                       and booted from the server's RAM.
+                                       If true, OS will be installed to
+                                       and booted from the server's RAM.
+        :type    ex_install_os_to_ram: ``bool``
+
+        :keyword ex_cloud_init_user_data: User data for the cloud-init configuration in base64
+                                          encoding. NoCloud format is supported.
+        :type    ex_cloud_init_user_data: ``str``
+
+        :keyword ex_force: Control advanced features availability.
+                           It is advised to use with caution since it might lead to unhealthy setups.
+        :type    ex_force: ``bool``
+
+        :keyword ex_netris_controller: Netris Controller configuration properties.
+        :type    ex_netris_controller: ``dict``
+
+        :keyword ex_netris_softgate: Netris Softgate configuration properties.
+                                     {
+                                        'controllerAddress': '120.153.203.227',
+                                        'controllerVersion': '3.4.0-003',
+                                        'controllerAuthKey': 'w0OP8TjZaHO17DTwxtN5VYh5Bh1ZVH2s3WK1JRTw',
+                                     }
+        :type    ex_netris_softgate: ``dict``
+
+        :keyword ex_storage_configuration: Storage configuration.
+                                           {
+                                                'rootPartition': {
+                                                    'raid': 'NO_RAID',
+                                                    'size': -1
+                                                }
+                                           }
+        :type    ex_storage_configuration: ``dict``
+
+        :return: The newly provisioned node.
+        :rtype: :class:`Node`
+        """
+
+        if not isinstance(node, Node):
+            raise ValueError("node: expected parameter to be an instance of Node")
+
+        node_id = node.id
+        if name is None:
+            name = node.name
+
+        data = {
+            "hostname": name,
+            "os": image.id,
+            "description": ex_description,
+            "sshKeys": self._ensure_list(ex_ssh_keys),
+            "sshKeyIds": self._ensure_list(ex_ssh_key_ids),
+            "installDefaultSshKeys": ex_install_default_ssh_keys,
+            "networkType": ex_network_type,
+            "networkConfiguration": {
+                "gatewayAddress": ex_gateway_address,
+                "privateNetworkConfiguration": {
+                    "configurationType": ex_private_network_configuration_type,
+                    "privateNetworks": self._ensure_list(ex_private_networks),
+                },
+                "ipBlocksConfiguration": {
+                    "configurationType": ex_ip_blocks_configuration_type,
+                    "ipBlocks": self._ensure_list(ex_ip_blocks_ids),
+                },
+                "publicNetworkConfiguration": {
+                    "publicNetworks": self._ensure_list(ex_public_networks)
+                },
+            },
+            "osConfiguration": {
+                "managementAccessAllowedIps": self._ensure_list(
+                    ex_management_access_allowed_ips
+                ),
+                "windows": {"rdpAllowedIps": self._ensure_list(ex_rdp_allowed_ips)},
+                "installOsToRam": ex_install_os_to_ram,
+                "cloudInit": {"userData": ex_cloud_init_user_data},
+                "netrisController": ex_netris_controller,
+                "netrisSoftgate": ex_netris_softgate,
+            },
+            "tags": self._ensure_list(ex_tags),
+            "storageConfiguration": ex_storage_configuration,
+        }
+        return self._create_resource(
+            "node",
+            data,
+            params={"force": ex_force},
+            resource_id=node_id,
+            end_of_url="/actions/provision",
+        )
+
     def ex_create_tag(self, name, description=None, is_billing_tag=False):
         """
         Create a tag with the provided information.

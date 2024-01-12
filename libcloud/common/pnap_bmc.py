@@ -48,6 +48,7 @@ NODE_STATE_MAP = {
     "resetting": NodeState.PENDING,
     "powered-on": NodeState.RUNNING,
     "powered-off": NodeState.STOPPED,
+    "reserved": NodeState.UNKNOWN,
     "error": NodeState.ERROR,
 }
 
