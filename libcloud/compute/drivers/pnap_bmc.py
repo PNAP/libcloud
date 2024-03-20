@@ -2166,6 +2166,122 @@ class PnapBmcNodeDriver(NodeDriver):
         )
         return res.status in VALID_RESPONSE_CODES
 
+    def ex_get_invoices(
+        self,
+        number=None,
+        status=None,
+        sent_on_from=None,
+        sent_on_to=None,
+        limit=None,
+        offset=None,
+        sort_field=None,
+        sort_direction=None,
+    ):
+        """
+        List invoices.
+
+        :param: number: A user-friendly reference number assigned to the invoice.
+        :type   number: ``str``
+
+        :param: status: Payment status of the invoice.
+        :type   status: ``str``
+
+        :param: sent_on_form: Minimum value to filter invoices by sent on date.
+        :type   sent_on_from: ``str``
+
+        :param: sent_on_to: Maximum value to filter invoices by sent on date.
+        :type   sent_on_to: ``str``
+
+        :param: limit: The limit of the number of results returned. The number of records returned may be smaller than the limit.
+        :type   limit: ``int``
+
+        :param: offset: The number of items to skip in the results.
+        :type   offset: ``int``
+
+        :param: sort_field: If a sortField is requested, pagination will be done after sorting.
+        :type   sort_field: ``str``
+
+        :param: sort_direction: Sort Given Field depending on the desired direction.
+        :type   sort_direction: ``str``
+
+        :rtype: ``dict``
+        """
+        params = {
+            "number": number,
+            "status": status,
+            "sentOnFrom": sent_on_from,
+            "sentOnTo": sent_on_to,
+            "limit": limit,
+            "offset": offset,
+            "sortField": sort_field,
+            "sortDirection": sort_direction,
+        }
+        return self._retrieve("invoice", params=params)
+
+    def ex_get_invoice_by_id(self, invoice_id):
+        """
+        Get invoice details.
+
+        :param: invoice_id: The unique resource identifier of the Invoice.
+        :type   invoice_id: ``str``
+
+        :rtype: ``dict``
+        """
+        return self._get_resource_by_id("invoice", invoice_id)
+
+    def ex_get_transactions(
+        self,
+        limit=None,
+        offset=None,
+        sort_direction=None,
+        sort_field=None,
+        from_date=None,
+        to_date=None,
+    ):
+        """
+        A paginated list of client's transactions.
+
+        :param: limit: The limit of the number of results returned. The number of records returned may be smaller than the limit.s
+        :type   limit: ``int``
+
+        :param: offset: The number of items to skip in the results.
+        :type   offset: ``int``
+
+        :param: sort_direction: Sort Given Field depending on the desired direction.
+        :type   sort_direction: ``str``
+
+        :param: sort_field: If a sortField is requested, pagination will be done after sorting.
+        :type   sort_field: ``str``
+
+        :param: from_date: From the date and time (inclusive) to filter transactions by..
+        :type   sort_field: ``str``
+
+        :param: to_date: To the date and time (inclusive) to filter transactions by.
+        :type   sort_field: ``str``
+
+        :rtype: ``dict``
+        """
+        params = {
+            "limit": limit,
+            "offset": offset,
+            "sortDirection": sort_direction,
+            "sortField": sort_field,
+            "from": from_date,
+            "to_date": to_date,
+        }
+        return self._retrieve("transaction", params=params)
+
+    def ex_get_transaction_by_id(self, transaction_id):
+        """
+        Get transaction details.
+
+        :param: transaction_id: The transaction identifier.
+        :type   transaction_id: ``str``
+
+        :rtype: ``dict``
+        """
+        return self._get_resource_by_id("transaction", transaction_id)
+
     def _to_key_pair(self, data):
         extra = {
             "id": data.get("id"),
@@ -2336,13 +2452,17 @@ class PnapBmcNodeDriver(NodeDriver):
                 return getattr(self, "_to_" + resource_type)(item)
 
     def _get_resource_by_id(self, resource_type, id):
+        has_own_class = getattr(self, "_to_" + resource_type, None)
         try:
             response = self.connection.request(
                 API_ENDPOINTS[resource_type.upper()] + id
             ).object
         except Exception:
             return None
-        return getattr(self, "_to_" + resource_type)(response)
+        if has_own_class:
+            return getattr(self, "_to_" + resource_type)(response)
+        else:
+            return response
 
     def _edit_resource(self, resource_type, resource, data, method="PATCH"):
         if resource_type == "key_pair":
