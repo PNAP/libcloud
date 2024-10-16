@@ -40,6 +40,7 @@ API_ENDPOINTS = {
     "STORAGE_NETWORK": "/network-storage/v1/storage-networks/",
     "INVOICE": "/invoicing/v1/invoices/",
     "TRANSACTION": "payments/v1/transactions/",
+    "BGP_PEER_GROUP": "networks/v1/bgp-peer-groups/"
 }
 
 NODE_STATE_MAP = {

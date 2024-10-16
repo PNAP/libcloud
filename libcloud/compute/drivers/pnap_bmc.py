@@ -2282,6 +2282,95 @@ class PnapBmcNodeDriver(NodeDriver):
         """
         return self._get_resource_by_id("transaction", transaction_id)
 
+    def ex_create_bgp_peer_group(
+        self, location, asn, advertised_routes, password=None
+    ):
+        """
+        Create a BGP Peer Group.
+
+        :param: location: The BGP Peer Group location. (required)
+        :type:  location: ``str``
+
+        :param: asn: The BGP Peer Group ASN. (required)
+        :type:  asn: ``int``
+
+        :param: advertised_routes: The Advertised routes for the BGP Peer Group.
+        :type:  advertised_routes: ``str``
+
+        :param: password: The BGP Peer Group password..
+        :type:  password: ``str``
+
+        :rtype: ``dict``
+        """
+
+        data = {
+            "location": location,
+            "asn": asn,
+            "advertisedRoutes": advertised_routes,
+            "password": password,
+        }
+        return self._create_resource("bgp_peer_group", data)
+
+    def ex_list_bgp_peer_groups(self):
+        """
+        List all BGP Peer Groups owned by account.
+
+        :rtype: ``list`` of ``dict``
+        """
+        return self._list_resources("bgp_peer_group")
+
+    def ex_get_bgp_peer_group_by_id(self, bgp_peer_group_id):
+        """
+        Get a specific BGP Peer Group by id.
+
+        :param bgp_peer_group_id: The unique identifier of the BGP Peer Group.
+        :type  bgp_peer_group_id: ``str``
+
+        :rtype: :class: ``dict``
+        """
+        return self._get_resource_by_id("bgp_peer_group", bgp_peer_group_id)
+
+    def ex_edit_bgp_peer_group(self, bgp_peer_group_id, asn=None, advertised_routes=None, password=None):
+        """
+        Edit an existing BGP Peer Group.
+
+        :param bgp_peer_group_id: The unique identifier of the BGP Peer Group.
+        :type  bgp_peer_group_id: ``str``
+
+        :param: asn: The BGP Peer Group ASN.
+        :type:  asn: ``int``
+
+        :param: advertised_routes: The Advertised routes for the BGP Peer Group.
+        :type:  advertised_routes: ``str``
+
+        :param: password: The BGP Peer Group password.
+        :type:  password: ``str``
+
+        :rtype: :class:`PnapBmcStorageNetwork`
+        """
+        
+        data = {}
+        if asn:
+            data['asn'] = asn
+        if advertised_routes:
+            data['advertisedRoutes'] = advertised_routes
+        if password:
+            data['password'] = password
+
+        return self._edit_resource_by_id("bgp_peer_group", bgp_peer_group_id, "", data=data, method="PATCH")
+
+    def ex_delete_bgp_peer_group(self, bgp_peer_group_id):
+        """
+        Delete an existing BGP Peer Group by ID.
+
+        :param bgp_peer_group_id: The unique identifier of the BGP Peer Group.
+        :type  bgp_peer_group_id: ``str``
+
+        :return: True on success
+        :rtype: ``bool``
+        """
+        return self._delete_resource("bgp_peer_group", bgp_peer_group_id)
+
     def _to_key_pair(self, data):
         extra = {
             "id": data.get("id"),
